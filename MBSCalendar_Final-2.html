@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MBS Family Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#E3F2FD;min-height:100vh;}
+.hidden{display:none!important;}
+
+/* AUTH */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.auth-box{background:#fff;border-radius:24px;padding:32px;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(25,118,210,0.15);}
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo-ico{width:64px;height:64px;background:#1976D2;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.auth-logo-ico i{font-size:30px;color:#fff;}
+.auth-title{font-family:'Fredoka One',cursive;font-size:26px;color:#0D1B3E;}
+.auth-sub{font-size:13px;color:#37587A;margin-top:3px;}
+.tab-row{display:flex;background:#E3F2FD;border-radius:12px;padding:4px;margin-bottom:20px;}
+.tab-btn{flex:1;padding:9px;border:none;background:transparent;border-radius:9px;font-family:'Fredoka One',cursive;font-size:15px;color:#37587A;cursor:pointer;}
+.tab-btn.active{background:#fff;color:#1976D2;box-shadow:0 2px 8px rgba(25,118,210,0.12);}
+.lbl{font-size:12px;font-weight:800;color:#0D47A1;margin-bottom:4px;display:block;}
+.inp{width:100%;border:2px solid #BBDEFB;border-radius:11px;padding:10px 13px;font-family:'Nunito',sans-serif;font-size:14px;color:#0D1B3E;background:#E3F2FD;margin-bottom:12px;}
+.inp:focus{outline:none;border-color:#1976D2;}
+.bigbtn{width:100%;border:none;border-radius:13px;padding:13px;font-family:'Fredoka One',cursive;font-size:16px;cursor:pointer;margin-bottom:10px;}
+.btn-blue{background:#1976D2;color:#fff;}
+.btn-out{background:#fff;color:#1976D2;border:2px solid #1976D2;}
+.btn-sm{border:none;border-radius:11px;padding:8px 16px;font-family:'Fredoka One',cursive;font-size:13px;cursor:pointer;}
+.divider{text-align:center;color:#37587A;font-size:12px;font-weight:700;margin:8px 0;position:relative;}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:44%;height:1px;background:#BBDEFB;}
+.divider::before{left:0;}.divider::after{right:0;}
+
+/* GREETING */
+.greet-wrap{min-height:100vh;background:linear-gradient(160deg,#0D47A1,#1976D2,#42A5F5);display:flex;align-items:center;justify-content:center;padding:20px;}
+.greet-box{text-align:center;max-width:420px;width:100%;}
+.greet-av{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:32px;color:#fff;border:3px solid rgba(255,255,255,0.4);}
+.greet-time{font-family:'Fredoka One',cursive;font-size:60px;color:#fff;line-height:1;}
+.greet-date{font-size:13px;color:rgba(255,255,255,0.7);font-weight:700;margin:4px 0 16px;}
+.greet-msg{font-family:'Fredoka One',cursive;font-size:28px;color:#fff;}
+.greet-name{font-family:'Fredoka One',cursive;font-size:44px;color:#90CAF9;margin-bottom:20px;}
+.greet-schedule{background:rgba(255,255,255,0.15);border-radius:18px;padding:16px;margin-bottom:16px;text-align:left;}
+.greet-schedule-title{font-family:'Fredoka One',cursive;font-size:15px;color:#fff;margin-bottom:10px;}
+.greet-ev{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.15);}
+.greet-ev:last-child{border:none;}
+.greet-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.greet-ev-txt{font-size:13px;color:#fff;font-weight:700;}
+.greet-ev-time{font-size:11px;color:rgba(255,255,255,0.6);margin-left:auto;}
+.greet-btn{width:100%;border:none;background:#fff;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:16px;color:#1976D2;cursor:pointer;margin-bottom:10px;}
+.greet-share-btn{width:100%;border:2px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.15);border-radius:14px;padding:11px;font-family:'Fredoka One',cursive;font-size:14px;color:#fff;cursor:pointer;margin-bottom:8px;}
+.greet-tip{background:rgba(255,255,255,0.1);border-radius:12px;padding:12px;font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;}
+
+/* MAIN APP */
+.app-wrap{max-width:1100px;margin:0 auto;padding:14px;}
+.topbar{background:#fff;border-radius:18px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;box-shadow:0 2px 12px rgba(25,118,210,0.08);}
+.top-logo{display:flex;align-items:center;gap:10px;}
+.top-logo-ico{width:36px;height:36px;background:#1976D2;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.top-logo-ico i{font-size:18px;color:#fff;}
+.top-logo-name{font-family:'Fredoka One',cursive;font-size:18px;color:#0D1B3E;}
+.top-logo-fam{font-size:11px;color:#37587A;font-weight:700;}
+.top-right{display:flex;align-items:center;gap:8px;}
+.top-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:14px;color:#fff;cursor:pointer;}
+.top-chip{display:flex;align-items:center;gap:7px;background:#E3F2FD;border-radius:20px;padding:5px 12px 5px 5px;cursor:pointer;}
+.top-chip-name{font-size:12px;font-weight:800;color:#0D47A1;}
+.notif-ico{width:34px;height:34px;background:#E3F2FD;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;border:none;}
+.notif-ico i{font-size:17px;color:#1976D2;}
+.notif-dot{width:7px;height:7px;background:#E53935;border-radius:50%;position:absolute;top:6px;right:6px;border:2px solid #fff;}
+
+.main-grid{display:grid;grid-template-columns:190px 1fr;gap:12px;}
+.sidebar{background:#fff;border-radius:18px;padding:14px 8px;box-shadow:0 2px 12px rgba(25,118,210,0.06);}
+.nav-sec{font-size:10px;font-weight:800;color:#90CAF9;letter-spacing:1.5px;text-transform:uppercase;padding:8px 12px 3px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:12px;cursor:pointer;font-weight:700;font-size:13px;color:#37587A;margin-bottom:3px;border:none;background:transparent;width:100%;text-align:left;}
+.nav-item:hover{background:#E3F2FD;color:#0D47A1;}
+.nav-item.active{background:#1976D2;color:#fff;}
+.nav-item i{font-size:17px;}
+.fam-box{margin-top:14px;background:#E3F2FD;border-radius:13px;padding:12px;}
+.fam-box-title{font-family:'Fredoka One',cursive;font-size:12px;color:#0D47A1;margin-bottom:8px;}
+.fam-mem{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(25,118,210,0.1);}
+.fam-mem:last-child{border:none;}
+.fam-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:10px;color:#fff;flex-shrink:0;}
+.fam-name{font-size:11px;font-weight:700;color:#0D1B3E;}
+.fam-dot{width:6px;height:6px;border-radius:50%;margin-left:auto;}
+
+.content{background:#fff;border-radius:18px;padding:18px 20px;box-shadow:0 2px 12px rgba(25,118,210,0.06);}
+.page{display:none;}.page.active{display:block;}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.page-title{font-family:'Fredoka One',cursive;font-size:24px;color:#0D1B3E;}
+.page-sub{font-size:12px;font-weight:700;color:#37587A;margin-top:1px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat{border-radius:14px;padding:14px;text-align:center;}
+.stat-n{font-family:'Fredoka One',cursive;font-size:28px;}
+.stat-l{font-size:10px;font-weight:800;margin-top:2px;}
+
+/* CARDS */
+.card{background:#fff;border:2px solid #BBDEFB;border-radius:14px;padding:12px 14px;margin-bottom:10px;}
+.card-title{font-family:'Fredoka One',cursive;font-size:14px;color:#0D1B3E;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+
+/* EVENTS */
+.ev-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1.5px dashed #BBDEFB;}
+.ev-item:last-child{border:none;}
+.ev-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
+.ev-title{font-size:13px;font-weight:700;color:#0D1B3E;}
+.ev-meta{font-size:11px;color:#37587A;}
+.ev-who{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:auto;white-space:nowrap;}
+.ev-del{background:#FFEBEE;border:none;border-radius:8px;padding:4px 8px;cursor:pointer;color:#C62828;font-size:12px;}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cal-month{font-family:'Fredoka One',cursive;font-size:20px;color:#0D1B3E;}
+.cal-nav-btn{width:32px;height:32px;background:#E3F2FD;border:none;border-radius:9px;cursor:pointer;font-size:15px;color:#1976D2;}
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.cal-dh{text-align:center;font-size:10px;font-weight:800;color:#37587A;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-day{border-radius:9px;padding:5px 3px;min-height:64px;border:2px solid transparent;cursor:pointer;}
+.cal-day:hover{border-color:#1976D2;background:#E3F2FD;}
+.cal-day.today{background:#1976D2;}
+.cal-day.today .cal-dn{color:#fff;}
+.cal-day.other{opacity:0.3;}
+.cal-day.sel{border-color:#E53935;background:#FFEBEE;}
+.cal-dn{font-size:12px;font-weight:800;color:#0D1B3E;display:block;text-align:center;margin-bottom:2px;}
+.cal-ev{border-radius:4px;padding:1px 4px;font-size:8px;font-weight:800;color:#fff;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+
+/* TASKS */
+.task-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border:2px solid #BBDEFB;border-radius:12px;margin-bottom:8px;}
+.task-chk{width:22px;height:22px;border-radius:7px;border:2px solid #BBDEFB;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.task-chk.done{background:#1976D2;border-color:#1976D2;}
+.task-chk.done i{color:#fff;font-size:13px;}
+.task-txt{font-size:13px;font-weight:700;color:#0D1B3E;flex:1;}
+.task-txt.done{text-decoration:line-through;color:#37587A;}
+.task-who-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.task-del{background:#FFEBEE;border:none;border-radius:7px;padding:4px 7px;cursor:pointer;color:#C62828;font-size:11px;}
+
+/* NOTES */
+.note-card{background:#fff;border:2px solid #BBDEFB;border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer;}
+.note-card:hover{border-color:#1976D2;}
+.note-title{font-size:14px;font-weight:800;color:#0D1B3E;}
+.note-body{font-size:12px;color:#37587A;margin-top:4px;line-height:1.5;}
+.note-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.note-author{font-size:10px;font-weight:700;color:#37587A;}
+
+/* FAMILY */
+.fam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.fam-card{background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px;text-align:center;}
+.fam-card:hover{border-color:#1976D2;}
+.fam-card-av{width:52px;height:52px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:20px;color:#fff;}
+.fam-card-name{font-size:13px;font-weight:800;color:#0D1B3E;}
+.fam-card-role{font-size:10px;color:#37587A;}
+.invite-box{background:#E3F2FD;border:2px dashed #1976D2;border-radius:16px;padding:18px;text-align:center;}
+.invite-code{font-family:'Fredoka One',cursive;font-size:28px;color:#1976D2;letter-spacing:4px;margin:8px 0 12px;}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal-box{background:#fff;border-radius:22px;padding:24px;max-width:440px;width:90%;max-height:90vh;overflow-y:auto;position:relative;}
+.modal-title{font-family:'Fredoka One',cursive;font-size:20px;color:#0D1B3E;margin-bottom:14px;}
+.modal-close{position:absolute;top:12px;right:12px;background:#FFEBEE;border:none;border-radius:8px;width:28px;height:28px;cursor:pointer;color:#C62828;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.color-pick{display:flex;gap:8px;margin-bottom:12px;}
+.color-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;}
+.color-dot.sel{border-color:#0D1B3E;}
+.cat-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.cat-btn{padding:5px 11px;border-radius:20px;border:2px solid #BBDEFB;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#37587A;}
+.cat-btn.active{background:#1976D2;border-color:#1976D2;color:#fff;}
+
+/* NOTIF PANEL */
+.notif-panel{display:none;position:fixed;top:68px;right:18px;width:300px;background:#fff;border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:200;padding:14px;}
+.notif-panel.open{display:block;}
+
+/* PERMISSION MODAL */
+.perm-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:300;align-items:center;justify-content:center;}
+.perm-modal.open{display:flex;}
+.perm-box{background:#fff;border-radius:22px;padding:28px;max-width:380px;width:90%;text-align:center;}
+
+.empty{text-align:center;padding:30px;color:#37587A;}
+.fam-search-result{border:2px solid #BBDEFB;border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;}
+.fam-search-result:hover{border-color:#1976D2;background:#E3F2FD;}
+.fam-search-result.selected{border-color:#1976D2;background:#E3F2FD;}
+.member-preview{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.mp-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:11px;color:#fff;flex-shrink:0;}
+.pending-badge{display:inline-block;background:#FFF8E1;color:#E65100;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1.5px solid #F57F17;}
+.approved-badge{display:inline-block;background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1.5px solid #2E7D32;}
+.empty i{font-size:40px;color:#BBDEFB;display:block;margin-bottom:8px;}
+.empty p{font-family:'Fredoka One',cursive;font-size:14px;}
+</style>
+</head>
+<body>
+
+<!-- JOIN REQUEST MODAL (shown to admin when someone wants to join) -->
+<div class="modal-bg" id="join-req-modal">
+  <div class="modal-box" style="text-align:center;">
+    <div style="font-size:48px;margin-bottom:10px;">🔔</div>
+    <div class="modal-title">Join request!</div>
+    <p style="font-size:13px;color:#37587A;margin-bottom:6px;line-height:1.6;">
+      <strong id="req-user-name"></strong> wants to join <strong id="req-fam-name2"></strong>.
+    </p>
+    <div style="background:#E3F2FD;border-radius:12px;padding:12px;margin-bottom:16px;text-align:left;">
+      <div style="font-size:12px;font-weight:800;color:#0D47A1;margin-bottom:6px;">Their details:</div>
+      <div style="font-size:12px;color:#37587A;" id="req-user-details"></div>
+    </div>
+    <p style="font-size:12px;color:#37587A;margin-bottom:16px;">Do you want to approve this person to join your family calendar?</p>
+    <div style="display:flex;gap:10px;">
+      <button class="bigbtn" style="background:#FFEBEE;color:#C62828;" id="reject-req-btn">Reject</button>
+      <button class="bigbtn btn-blue" id="approve-req-btn">Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION PERMISSION -->
+<div class="perm-modal" id="perm-modal">
+  <div class="perm-box">
+    <div style="font-size:52px;margin-bottom:10px;">🔔</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:22px;color:#0D1B3E;margin-bottom:8px;">Stay in the loop!</div>
+    <p style="font-size:13px;color:#37587A;margin-bottom:18px;line-height:1.6;">Allow MBS Family Calendar to send you daily schedule reminders and event notifications!</p>
+    <button class="bigbtn btn-blue" onclick="allowNotif()" style="margin-bottom:8px;">Allow notifications</button>
+    <button class="bigbtn btn-out" onclick="denyNotif()">Not now</button>
+  </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
+<div class="modal-bg" id="event-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="close-event-modal">X</button>
+    <div class="modal-title">Add event</div>
+    <label class="lbl">Event title</label>
+    <input class="inp" id="ev-title" type="text" placeholder="e.g. Doctor appointment"/>
+    <label class="lbl">Date</label>
+    <input class="inp" id="ev-date" type="date"/>
+    <div class="two-col">
+      <div><label class="lbl">Start time</label><input class="inp" id="ev-start" type="time"/></div>
+      <div><label class="lbl">End time</label><input class="inp" id="ev-end" type="time"/></div>
+    </div>
+    <label class="lbl">Category</label>
+    <div class="cat-row" id="cat-row">
+      <button class="cat-btn active" id="cat-Family">Family</button>
+      <button class="cat-btn" id="cat-School">School</button>
+      <button class="cat-btn" id="cat-Health">Health</button>
+      <button class="cat-btn" id="cat-Sports">Sports</button>
+      <button class="cat-btn" id="cat-Birthday">Birthday</button>
+      <button class="cat-btn" id="cat-Work">Work</button>
+      <button class="cat-btn" id="cat-Other">Other</button>
+    </div>
+    <label class="lbl">Color</label>
+    <div class="color-pick" id="color-pick">
+      <div class="color-dot sel" id="col-1976D2" style="background:#1976D2;"></div>
+      <div class="color-dot" id="col-E53935" style="background:#E53935;"></div>
+      <div class="color-dot" id="col-2E7D32" style="background:#2E7D32;"></div>
+      <div class="color-dot" id="col-F57F17" style="background:#F57F17;"></div>
+      <div class="color-dot" id="col-6A1B9A" style="background:#6A1B9A;"></div>
+      <div class="color-dot" id="col-00838F" style="background:#00838F;"></div>
+    </div>
+    <label class="lbl">Notes</label>
+    <textarea class="inp" id="ev-notes" rows="2" placeholder="Any extra details..."></textarea>
+    <label class="lbl">Who is this for?</label>
+    <select class="inp" id="ev-who"></select>
+    <button class="bigbtn btn-blue" id="save-event-btn">Save event</button>
+  </div>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-bg" id="task-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="close-task-modal">X</button>
+    <div class="modal-title">Add task</div>
+    <label class="lbl">Task</label>
+    <input class="inp" id="task-inp" type="text" placeholder="e.g. Pick up groceries"/>
+    <label class="lbl">Assigned to</label>
+    <select class="inp" id="task-who"></select>
+    <label class="lbl">Due date</label>
+    <input class="inp" id="task-due" type="date"/>
+    <button class="bigbtn btn-blue" id="save-task-btn">Add task</button>
+  </div>
+</div>
+
+<!-- ADD NOTE MODAL -->
+<div class="modal-bg" id="note-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="close-note-modal">X</button>
+    <div class="modal-title">Add note</div>
+    <label class="lbl">Title</label>
+    <input class="inp" id="note-title-inp" type="text" placeholder="e.g. Vacation ideas"/>
+    <label class="lbl">Note</label>
+    <textarea class="inp" id="note-body-inp" rows="4" placeholder="Write your note here..."></textarea>
+    <button class="bigbtn btn-blue" id="save-note-btn">Save note</button>
+  </div>
+</div>
+
+<!-- INVITE MODAL -->
+<div class="modal-bg" id="invite-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="close-invite-modal">X</button>
+    <div class="modal-title">Invite family member</div>
+    <label class="lbl">Their name</label>
+    <input class="inp" id="inv-name" type="text" placeholder="e.g. Mom, Dad, Sarah..."/>
+    <label class="lbl">Their email</label>
+    <input class="inp" id="inv-email" type="email" placeholder="email@example.com"/>
+    <label class="lbl">Role</label>
+    <select class="inp" id="inv-role">
+      <option>Parent</option><option>Child</option><option>Grandparent</option><option>Other</option>
+    </select>
+    <button class="bigbtn btn-blue" id="save-invite-btn">Send invite</button>
+  </div>
+</div>
+
+<!-- NOTIF PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div style="font-family:'Fredoka One',cursive;font-size:15px;color:#0D1B3E;margin-bottom:10px;">Notifications</div>
+  <div id="notif-list"><div style="font-size:12px;color:#37587A;">No notifications right now!</div></div>
+</div>
+
+<!-- ===== AUTH SCREEN ===== -->
+<div id="auth-screen" class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-ico"><i class="ti ti-calendar-heart"></i></div>
+      <div class="auth-title">MBS Family Calendar</div>
+      <div class="auth-sub">Stay connected as a family 💙</div>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-signin">Sign in</button>
+      <button class="tab-btn" id="tab-signup">Sign up</button>
+    </div>
+    <div id="signin-panel">
+      <label class="lbl">Your name</label>
+      <input class="inp" id="si-name" type="text" placeholder="Your name"/>
+      <label class="lbl">Email</label>
+      <input class="inp" id="si-email" type="email" placeholder="your@email.com"/>
+      <button class="bigbtn btn-blue" id="signin-btn">Sign in</button>
+      <div class="divider">or</div>
+      <button class="bigbtn btn-out" id="guest-btn">Continue as guest</button>
+    </div>
+    <div id="signup-panel" class="hidden">
+      <!-- STEP 1: Basic info -->
+      <div id="su-step1">
+        <label class="lbl">Your name</label>
+        <input class="inp" id="su-name" type="text" placeholder="Your name"/>
+        <label class="lbl">Email</label>
+        <input class="inp" id="su-email" type="email" placeholder="your@email.com"/>
+        <label class="lbl">Your role</label>
+        <select class="inp" id="su-role">
+          <option>Parent</option><option>Child</option><option>Grandparent</option><option>Other</option>
+        </select>
+        <button class="bigbtn btn-blue" id="signup-next-btn">Continue</button>
+      </div>
+
+      <!-- STEP 2: Join or Create -->
+      <div id="su-step2" class="hidden">
+        <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#0D1B3E;margin-bottom:14px;">Join or create a family group?</div>
+        <div id="opt-join" style="border:2px solid #BBDEFB;border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;">
+          <div style="width:42px;height:42px;background:#E3F2FD;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">👨‍👩‍👧</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0D1B3E;">Join existing family group</div>
+            <div style="font-size:11px;color:#37587A;">Search for your family and request to join</div>
+          </div>
+        </div>
+        <div id="opt-create" style="border:2px solid #BBDEFB;border-radius:14px;padding:14px;cursor:pointer;display:flex;align-items:center;gap:12px;">
+          <div style="width:42px;height:42px;background:#E8F5E9;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">✨</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0D1B3E;">Create new family group</div>
+            <div style="font-size:11px;color:#37587A;">Start fresh and invite your family</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3A: Join flow -->
+      <div id="su-step3-join" class="hidden">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;cursor:pointer;" id="join-back-btn">
+          <i class="ti ti-arrow-left" style="color:#1976D2;font-size:16px;"></i>
+          <span style="font-size:13px;font-weight:700;color:#1976D2;">Back</span>
+        </div>
+        <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#0D1B3E;margin-bottom:10px;">Find your family group</div>
+        <label class="lbl">Family group name or invite code</label>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <input class="inp" id="join-search" type="text" placeholder="e.g. The Johnson Family or MBS-1234" style="margin-bottom:0;flex:1;"/>
+          <button class="bigbtn btn-blue btn-sm" id="search-fam-btn" style="white-space:nowrap;">Search</button>
+        </div>
+        <div id="search-results" class="hidden">
+          <div style="font-size:12px;font-weight:800;color:#37587A;margin-bottom:8px;">Search results:</div>
+          <div id="search-results-list"></div>
+        </div>
+        <div id="pending-request" class="hidden" style="background:#FFF8E1;border:2px solid #F57F17;border-radius:14px;padding:16px;text-align:center;margin-top:10px;">
+          <div style="font-size:28px;margin-bottom:8px;">⏳</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#E65100;margin-bottom:6px;">Request sent!</div>
+          <div style="font-size:12px;color:#37587A;line-height:1.6;">Your request to join <strong id="req-fam-name"></strong> has been sent. A family member needs to approve your request before you can see the calendar.</div>
+          <div style="margin-top:12px;font-size:11px;color:#37587A;">You will be notified when approved.</div>
+        </div>
+      </div>
+
+      <!-- STEP 3B: Create flow -->
+      <div id="su-step3-create" class="hidden">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;cursor:pointer;" id="create-back-btn">
+          <i class="ti ti-arrow-left" style="color:#1976D2;font-size:16px;"></i>
+          <span style="font-size:13px;font-weight:700;color:#1976D2;">Back</span>
+        </div>
+        <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#0D1B3E;margin-bottom:10px;">Create your family group</div>
+        <label class="lbl">Family group name</label>
+        <input class="inp" id="su-fam" type="text" placeholder="e.g. The Johnson Family"/>
+        <label class="lbl">Your role in the family</label>
+        <select class="inp" id="su-role2">
+          <option>Parent</option><option>Guardian</option><option>Grandparent</option><option>Other</option>
+        </select>
+        <div style="background:#E3F2FD;border-radius:12px;padding:12px;margin-bottom:12px;font-size:12px;color:#37587A;line-height:1.6;">
+          You will be the <strong>admin</strong> of this group. You can approve or reject join requests from other family members.
+        </div>
+        <button class="bigbtn btn-blue" id="signup-btn">Create family group</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GREETING SCREEN ===== -->
+<div id="greet-screen" class="greet-wrap hidden">
+  <div class="greet-box">
+    <div class="greet-av" id="g-av"></div>
+    <div class="greet-time" id="g-time"></div>
+    <div class="greet-date" id="g-date"></div>
+    <div class="greet-msg" id="g-msg"></div>
+    <div class="greet-name" id="g-name"></div>
+    <div class="greet-schedule">
+      <div class="greet-schedule-title">Today's schedule</div>
+      <div id="g-events"><div style="font-size:13px;color:rgba(255,255,255,0.6);">No events today — enjoy your day!</div></div>
+    </div>
+    <button class="greet-btn" id="enter-app-btn">Go to calendar</button>
+    <button class="greet-share-btn" id="share-btn">Share today's schedule</button>
+    <div class="greet-tip">Tip: Tap Share in your browser then "Add to Home Screen" to install this app on your phone!</div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="main-app" class="app-wrap hidden">
+  <div class="topbar">
+    <div class="top-logo">
+      <div class="top-logo-ico"><i class="ti ti-calendar-heart"></i></div>
+      <div><div class="top-logo-name">MBS Family Calendar</div><div class="top-logo-fam" id="fam-name-label">My Family</div></div>
+    </div>
+    <div class="top-right">
+      <div id="top-avatars" style="display:flex;"></div>
+      <button class="notif-ico" id="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></button>
+      <div class="top-chip" id="user-chip">
+        <div class="top-av" id="chip-av" style="width:26px;height:26px;font-size:11px;"></div>
+        <div class="top-chip-name" id="chip-name"></div>
+      </div>
+    </div>
+  </div>
+  <div class="main-grid">
+    <div class="sidebar">
+      <div class="nav-sec">Calendar</div>
+      <button class="nav-item active" id="nav-home"><i class="ti ti-home"></i> Home</button>
+      <button class="nav-item" id="nav-calendar"><i class="ti ti-calendar"></i> Calendar</button>
+      <button class="nav-item" id="nav-today"><i class="ti ti-sun"></i> Today</button>
+      <div class="nav-sec">Family</div>
+      <button class="nav-item" id="nav-family"><i class="ti ti-users"></i> Family</button>
+      <button class="nav-item" id="nav-tasks"><i class="ti ti-checkbox"></i> Tasks</button>
+      <button class="nav-item" id="nav-notes"><i class="ti ti-notes"></i> Notes</button>
+      <div class="nav-sec">Account</div>
+      <button class="nav-item" id="nav-profile"><i class="ti ti-user"></i> Profile</button>
+      <div class="fam-box">
+        <div class="fam-box-title">Family online</div>
+        <div id="fam-online-list"></div>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- HOME -->
+      <div class="page active" id="page-home">
+        <div class="page-head">
+          <div><div class="page-title" id="home-greet">Welcome!</div><div class="page-sub" id="home-date"></div></div>
+          <button class="bigbtn btn-blue btn-sm" id="home-add-btn">+ Add event</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat" style="background:#E3F2FD;"><div class="stat-n" style="color:#0D47A1;" id="stat-events">0</div><div class="stat-l" style="color:#1976D2;">Events this month</div></div>
+          <div class="stat" style="background:#FFEBEE;"><div class="stat-n" style="color:#B71C1C;" id="stat-today">0</div><div class="stat-l" style="color:#E53935;">Events today</div></div>
+          <div class="stat" style="background:#E8F5E9;"><div class="stat-n" style="color:#1B5E20;" id="stat-tasks">0</div><div class="stat-l" style="color:#2E7D32;">Tasks pending</div></div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title" style="color:#0D47A1;"><i class="ti ti-calendar-event"></i> Upcoming events</div>
+            <div id="home-events"><div class="empty"><i class="ti ti-calendar"></i><p>No events yet!</p></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:#1B5E20;"><i class="ti ti-checkbox"></i> Today's tasks</div>
+            <div id="home-tasks"><div class="empty"><i class="ti ti-checkbox"></i><p>No tasks today!</p></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color:#37587A;"><i class="ti ti-activity"></i> Recent activity</div>
+          <div id="home-activity"><div style="font-size:12px;color:#37587A;">Activity shows here.</div></div>
+        </div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="page" id="page-calendar">
+        <div class="page-head">
+          <div><div class="page-title">Calendar</div></div>
+          <button class="bigbtn btn-blue btn-sm" id="cal-add-btn">+ Add event</button>
+        </div>
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="cal-prev"><i class="ti ti-chevron-left"></i></button>
+          <div class="cal-month" id="cal-month-lbl"></div>
+          <button class="cal-nav-btn" id="cal-next"><i class="ti ti-chevron-right"></i></button>
+        </div>
+        <div class="cal-head">
+          <div class="cal-dh">Sun</div><div class="cal-dh">Mon</div><div class="cal-dh">Tue</div>
+          <div class="cal-dh">Wed</div><div class="cal-dh">Thu</div><div class="cal-dh">Fri</div><div class="cal-dh">Sat</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="card" style="margin-top:14px;">
+          <div class="card-title" id="cal-events-lbl">All upcoming events</div>
+          <div id="cal-events-list"></div>
+        </div>
+      </div>
+
+      <!-- TODAY -->
+      <div class="page" id="page-today">
+        <div class="page-head">
+          <div><div class="page-title">Today</div><div class="page-sub" id="today-date-lbl"></div></div>
+          <div style="display:flex;gap:8px;">
+            <button class="bigbtn btn-blue btn-sm" id="today-add-btn">+ Add event</button>
+            <button class="bigbtn btn-sm" style="background:#E3F2FD;color:#1976D2;" id="today-share-btn">Share schedule</button>
+          </div>
+        </div>
+        <div id="today-list"><div class="empty"><i class="ti ti-sun"></i><p>Nothing scheduled today!</p></div></div>
+      </div>
+
+      <!-- FAMILY -->
+      <div class="page" id="page-family">
+        <div class="page-head">
+          <div><div class="page-title">Our family</div><div class="page-sub" id="fam-count-lbl">0 members</div></div>
+          <button class="bigbtn btn-blue btn-sm" id="invite-btn">+ Invite member</button>
+        </div>
+        <div class="fam-grid" id="fam-grid"></div>
+        <div id="pending-requests-section" class="hidden" style="margin-bottom:14px;">
+          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#E65100;margin-bottom:10px;">Pending join requests</div>
+          <div id="pending-req-list"></div>
+        </div>
+        <div class="invite-box">
+          <div style="font-family:'Fredoka One',cursive;font-size:15px;color:#0D47A1;margin-bottom:4px;">Share your invite code</div>
+          <div style="font-size:12px;color:#37587A;margin-bottom:8px;">Share this with family so they can join your calendar</div>
+          <div class="invite-code" id="inv-code-display">MBS-0000</div>
+          <button class="bigbtn btn-blue btn-sm" id="copy-code-btn">Copy code</button>
+        </div>
+      </div>
+
+      <!-- TASKS -->
+      <div class="page" id="page-tasks">
+        <div class="page-head">
+          <div><div class="page-title">Family tasks</div></div>
+          <button class="bigbtn btn-blue btn-sm" id="add-task-btn">+ Add task</button>
+        </div>
+        <div id="task-list"><div class="empty"><i class="ti ti-checkbox"></i><p>No tasks yet!</p></div></div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="page" id="page-notes">
+        <div class="page-head">
+          <div><div class="page-title">Family notes</div></div>
+          <button class="bigbtn btn-blue btn-sm" id="add-note-btn">+ Add note</button>
+        </div>
+        <div id="notes-list"><div class="empty"><i class="ti ti-notes"></i><p>No notes yet!</p></div></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="page" id="page-profile">
+        <div class="page-head"><div><div class="page-title">My profile</div></div></div>
+        <div class="card" style="text-align:center;padding:24px;">
+          <div id="profile-av" style="width:70px;height:70px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:28px;color:#fff;"></div>
+          <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#0D1B3E;" id="profile-name"></div>
+          <div style="font-size:13px;color:#37587A;margin-top:3px;" id="profile-email"></div>
+          <div style="font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;background:#E3F2FD;color:#0D47A1;display:inline-block;margin-top:8px;" id="profile-role"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+          <button class="bigbtn btn-blue" id="profile-greeting-btn">See morning greeting</button>
+          <button class="bigbtn btn-out" id="profile-notif-btn">Notifications</button>
+          <button class="bigbtn" style="background:#FFEBEE;color:#C62828;" id="signout-btn">Sign out</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+var user = null;
+var famName = 'My Family';
+var famCode = 'MBS-0000';
+var events = [];
+var tasks = [];
+var notes = [];
+var members = [];
+var activity = [];
+var selColor = '#1976D2';
+var selCat = 'Family';
+var selDate = null;
+var calY = new Date().getFullYear();
+var calM = new Date().getMonth();
+var notifGranted = false;
+var notifOpen = false;
+
+var COLORS = ['#1976D2','#E53935','#2E7D32','#F57F17','#6A1B9A','#00838F'];
+var AV_COLORS = ['#1976D2','#E53935','#2E7D32','#F57F17','#6A1B9A','#00838F','#1565C0','#AD1457'];
+
+function today() {
+  var d = new Date();
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+function pad(n) { return n < 10 ? '0'+n : ''+n; }
+function fmtDate(s) {
+  if (!s) return '';
+  var d = new Date(s + 'T00:00:00');
+  return d.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'});
+}
+function getH() { return new Date().getHours(); }
+
+// ===== SETUP ALL BUTTON LISTENERS =====
+window.onload = function() {
+  // ===== FAMILY GROUPS (simulated) =====
+  // In a real app this would be a database. Here we simulate it in memory.
+  window.FAMILY_GROUPS = [
+    {code:'MBS-1001', name:'The Johnson Family', admin:'Mike Johnson', members:[
+      {name:'Mike Johnson', role:'Parent', color:'#1976D2'},
+      {name:'Lisa Johnson', role:'Parent', color:'#E53935'},
+      {name:'Emma Johnson', role:'Child', color:'#2E7D32'},
+    ], pendingRequests:[]},
+    {code:'MBS-2002', name:'The Williams Family', admin:'Sarah Williams', members:[
+      {name:'Sarah Williams', role:'Parent', color:'#6A1B9A'},
+      {name:'Tom Williams', role:'Parent', color:'#00838F'},
+    ], pendingRequests:[]},
+  ];
+
+  window.pendingJoinGroup = null;
+  window.suUserInfo = null;
+
+  // Auth tabs
+  document.getElementById('tab-signin').onclick = function() {
+    document.getElementById('tab-signin').className = 'tab-btn active';
+    document.getElementById('tab-signup').className = 'tab-btn';
+    document.getElementById('signin-panel').className = '';
+    document.getElementById('signup-panel').className = 'hidden';
+  };
+  document.getElementById('tab-signup').onclick = function() {
+    document.getElementById('tab-signup').className = 'tab-btn active';
+    document.getElementById('tab-signin').className = 'tab-btn';
+    document.getElementById('signup-panel').className = '';
+    document.getElementById('signin-panel').className = 'hidden';
+  };
+
+  // Auth buttons
+  document.getElementById('signin-btn').onclick = doSignIn;
+  document.getElementById('guest-btn').onclick = doGuest;
+  document.getElementById('signup-btn').onclick = doSignUp;
+
+  // Signup step flow
+  document.getElementById('signup-next-btn').onclick = function() {
+    var name = document.getElementById('su-name').value.trim();
+    var email = document.getElementById('su-email').value.trim();
+    if (!name) { alert('Please enter your name!'); return; }
+    window.suUserInfo = {name:name, email:email, role:document.getElementById('su-role').value};
+    document.getElementById('su-step1').className = 'hidden';
+    document.getElementById('su-step2').className = '';
+  };
+
+  document.getElementById('opt-join').onclick = function() {
+    document.getElementById('su-step2').className = 'hidden';
+    document.getElementById('su-step3-join').className = '';
+  };
+
+  document.getElementById('opt-create').onclick = function() {
+    document.getElementById('su-step2').className = 'hidden';
+    document.getElementById('su-step3-create').className = '';
+  };
+
+  document.getElementById('join-back-btn').onclick = function() {
+    document.getElementById('su-step3-join').className = 'hidden';
+    document.getElementById('su-step2').className = '';
+    document.getElementById('search-results').className = 'hidden';
+    document.getElementById('pending-request').className = 'hidden';
+  };
+
+  document.getElementById('create-back-btn').onclick = function() {
+    document.getElementById('su-step3-create').className = 'hidden';
+    document.getElementById('su-step2').className = '';
+  };
+
+  document.getElementById('search-fam-btn').onclick = searchFamilyGroup;
+  document.getElementById('join-search').onkeydown = function(e) { if(e.key==='Enter') searchFamilyGroup(); };
+
+  // Join request modal buttons
+  document.getElementById('approve-req-btn').onclick = approveJoinRequest;
+  document.getElementById('reject-req-btn').onclick = function() {
+    document.getElementById('join-req-modal').className = 'modal-bg';
+  };
+
+  // Greeting buttons
+  document.getElementById('enter-app-btn').onclick = enterApp;
+  document.getElementById('share-btn').onclick = shareSchedule;
+
+  // Nav items
+  document.getElementById('nav-home').onclick = function() { showPage('home'); };
+  document.getElementById('nav-calendar').onclick = function() { showPage('calendar'); };
+  document.getElementById('nav-today').onclick = function() { showPage('today'); };
+  document.getElementById('nav-family').onclick = function() { showPage('family'); };
+  document.getElementById('nav-tasks').onclick = function() { showPage('tasks'); };
+  document.getElementById('nav-notes').onclick = function() { showPage('notes'); };
+  document.getElementById('nav-profile').onclick = function() { showPage('profile'); };
+
+  // Topbar
+  document.getElementById('notif-btn').onclick = toggleNotif;
+  document.getElementById('user-chip').onclick = function() { showPage('profile'); };
+
+  // Add event buttons
+  document.getElementById('home-add-btn').onclick = openEventModal;
+  document.getElementById('cal-add-btn').onclick = openEventModal;
+  document.getElementById('today-add-btn').onclick = openEventModal;
+  document.getElementById('today-share-btn').onclick = shareSchedule;
+
+  // Modal close buttons
+  document.getElementById('close-event-modal').onclick = function() { document.getElementById('event-modal').className = 'modal-bg'; };
+  document.getElementById('close-task-modal').onclick = function() { document.getElementById('task-modal').className = 'modal-bg'; };
+  document.getElementById('close-note-modal').onclick = function() { document.getElementById('note-modal').className = 'modal-bg'; };
+  document.getElementById('close-invite-modal').onclick = function() { document.getElementById('invite-modal').className = 'modal-bg'; };
+
+  // Save buttons
+  document.getElementById('save-event-btn').onclick = saveEvent;
+  document.getElementById('save-task-btn').onclick = saveTask;
+  document.getElementById('save-note-btn').onclick = saveNote;
+  document.getElementById('save-invite-btn').onclick = saveInvite;
+
+  // Family
+  document.getElementById('invite-btn').onclick = function() { document.getElementById('invite-modal').className = 'modal-bg open'; };
+  document.getElementById('copy-code-btn').onclick = copyCode;
+
+  // Tasks & Notes
+  document.getElementById('add-task-btn').onclick = function() { fillWho(); document.getElementById('task-modal').className = 'modal-bg open'; };
+  document.getElementById('add-note-btn').onclick = function() { document.getElementById('note-modal').className = 'modal-bg open'; };
+
+  // Calendar nav
+  document.getElementById('cal-prev').onclick = function() { calM--; if(calM<0){calM=11;calY--;} renderCal(); };
+  document.getElementById('cal-next').onclick = function() { calM++; if(calM>11){calM=0;calY++;} renderCal(); };
+
+  // Color picker
+  COLORS.forEach(function(c) {
+    var el = document.getElementById('col-' + c.replace('#',''));
+    if (el) el.onclick = function() {
+      document.querySelectorAll('.color-dot').forEach(function(d) { d.classList.remove('sel'); });
+      el.classList.add('sel');
+      selColor = c;
+    };
+  });
+
+  // Category buttons
+  document.querySelectorAll('.cat-btn').forEach(function(btn) {
+    btn.onclick = function() {
+      document.querySelectorAll('.cat-btn').forEach(function(b) { b.className = 'cat-btn'; });
+      btn.className = 'cat-btn active';
+      selCat = btn.id.replace('cat-', '');
+    };
+  });
+
+  // Profile buttons
+  document.getElementById('profile-greeting-btn').onclick = showGreeting;
+  document.getElementById('profile-notif-btn').onclick = function() { document.getElementById('perm-modal').className = 'perm-modal open'; };
+  document.getElementById('signout-btn').onclick = signOut;
+
+  // Notification permission
+  document.getElementById('perm-modal').querySelector('.btn-blue').onclick = allowNotif;
+  document.getElementById('perm-modal').querySelectorAll('.bigbtn')[1].onclick = denyNotif;
+
+  // Clock update
+  setInterval(function() {
+    var el = document.getElementById('g-time');
+    if (el) el.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    var gm = document.getElementById('g-msg');
+    if (gm) gm.textContent = getH() < 12 ? 'Good morning,' : getH() < 17 ? 'Good afternoon,' : 'Good evening,';
+  }, 1000);
+
+  // Show greeting when coming back to app
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && user) showGreeting();
+  });
+
+  // Close notif panel when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#notif-btn') && !e.target.closest('#notif-panel')) {
+      document.getElementById('notif-panel').className = 'notif-panel';
+      notifOpen = false;
+    }
+  });
+};
+
+// ===== AUTH =====
+function doSignIn() {
+  var name = document.getElementById('si-name').value.trim() || 'User';
+  var email = document.getElementById('si-email').value.trim() || 'user@family.com';
+  user = {name:name, email:email, role:'Member', color:AV_COLORS[0], id:Date.now()};
+  members = [{...user, online:true}];
+  famCode = 'MBS-' + Math.floor(1000 + Math.random()*9000);
+  startApp();
+}
+
+function doSignUp() {
+  // This is the CREATE family group flow
+  var info = window.suUserInfo || {};
+  var name = info.name || document.getElementById('su-name').value.trim() || 'User';
+  var email = info.email || document.getElementById('su-email').value.trim() || 'user@family.com';
+  var role = document.getElementById('su-role2') ? document.getElementById('su-role2').value : (info.role || 'Parent');
+  var fam = document.getElementById('su-fam').value.trim() || 'My Family';
+  if (!fam) { alert('Please enter your family group name!'); return; }
+  user = {name:name, email:email, role:role, color:AV_COLORS[0], id:Date.now(), isAdmin:true};
+  famName = fam;
+  famCode = 'MBS-' + Math.floor(1000 + Math.random()*9000);
+  // Create the group
+  var newGroup = {code:famCode, name:famName, admin:name, members:[{name:name, role:role, color:AV_COLORS[0]}], pendingRequests:[]};
+  window.FAMILY_GROUPS.push(newGroup);
+  window.myGroup = newGroup;
+  members = [{name:name, email:email, role:role, color:AV_COLORS[0], online:true, isAdmin:true, id:Date.now()}];
+  startApp();
+}
+
+// ===== SEARCH FAMILY GROUP =====
+function searchFamilyGroup() {
+  var query = document.getElementById('join-search').value.trim().toLowerCase();
+  if (!query) { alert('Please enter a family name or invite code!'); return; }
+  
+  var results = window.FAMILY_GROUPS.filter(function(g) {
+    return g.name.toLowerCase().includes(query) || g.code.toLowerCase() === query;
+  });
+
+  var el = document.getElementById('search-results');
+  var list = document.getElementById('search-results-list');
+  el.className = '';
+
+  if (!results.length) {
+    list.innerHTML = '<div style="text-align:center;padding:16px;color:#37587A;font-size:13px;font-weight:700;">No family group found. Check the name or invite code!</div>';
+    return;
+  }
+
+  list.innerHTML = results.map(function(g, i) {
+    var memPreviews = g.members.slice(0,4).map(function(m) {
+      return '<div class="mp-av" style="background:'+m.color+';" title="'+m.name+'">'+m.name[0]+'</div>';
+    }).join('');
+    var extra = g.members.length > 4 ? '<div style="font-size:10px;color:#37587A;font-weight:700;margin-left:4px;">+' + (g.members.length-4) + ' more</div>' : '';
+    return '<div class="fam-search-result" data-idx="'+i+'" onclick="selectFamGroup(this, '+i+', results_'+i+')">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+        '<div style="font-size:14px;font-weight:800;color:#0D1B3E;">'+g.name+'</div>' +
+        '<div style="font-size:10px;font-weight:700;color:#37587A;">'+g.code+'</div>' +
+      '</div>' +
+      '<div style="font-size:11px;color:#37587A;margin-bottom:8px;">Admin: '+g.admin+' &middot; '+g.members.length+' member'+(g.members.length!==1?'s':'')+'</div>' +
+      '<div style="font-size:11px;font-weight:700;color:#37587A;margin-bottom:6px;">Members in this group:</div>' +
+      '<div class="member-preview">' + memPreviews + extra + '</div>' +
+      g.members.slice(0,3).map(function(m) {
+        return '<div style="font-size:11px;color:#37587A;margin-top:4px;">&middot; '+m.name+' ('+m.role+')</div>';
+      }).join('') +
+      (g.members.length > 3 ? '<div style="font-size:11px;color:#37587A;margin-top:2px;">&middot; and '+(g.members.length-3)+' more...</div>' : '') +
+      '<button class="bigbtn btn-blue btn-sm" style="margin-top:10px;width:100%;" onclick="requestJoin(event, '+i+')">Request to join this family</button>' +
+    '</div>';
+  }).join('');
+
+  // Store results for access
+  window.searchResults = results;
+}
+
+function selectFamGroup(el, idx) {
+  document.querySelectorAll('.fam-search-result').forEach(function(r) { r.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function requestJoin(e, idx) {
+  e.stopPropagation();
+  var group = window.searchResults[idx];
+  var info = window.suUserInfo || {name:'Unknown', email:'', role:'Member'};
+  window.pendingJoinGroup = group;
+
+  // Add pending request to the group
+  var req = {name:info.name, email:info.email, role:info.role, color:AV_COLORS[Math.floor(Math.random()*AV_COLORS.length)], id:Date.now()};
+  group.pendingRequests.push(req);
+  window.pendingRequest = req;
+
+  // Show pending state
+  document.getElementById('search-results').className = 'hidden';
+  document.getElementById('req-fam-name').textContent = group.name;
+  document.getElementById('pending-request').className = '';
+
+  // Simulate: if current user is admin of this group, show them the request immediately
+  // In real app this would be a push notification to the admin
+  if (window.myGroup && window.myGroup.code === group.code && user && user.isAdmin) {
+    showJoinRequest(req, group);
+  }
+}
+
+function showJoinRequest(req, group) {
+  // Show the admin a notification about the join request
+  document.getElementById('req-user-name').textContent = req.name;
+  document.getElementById('req-fam-name2').textContent = group.name;
+  document.getElementById('req-user-details').innerHTML =
+    'Name: <strong>'+req.name+'</strong><br>' +
+    'Email: <strong>'+(req.email||'Not provided')+'</strong><br>' +
+    'Role: <strong>'+req.role+'</strong>';
+  document.getElementById('join-req-modal').className = 'modal-bg open';
+}
+
+function approveJoinRequest() {
+  document.getElementById('join-req-modal').className = 'modal-bg';
+  var group = window.pendingJoinGroup || window.myGroup;
+  var req = window.pendingRequest;
+  if (!req || !group) return;
+
+  // Add them to the group
+  group.members.push({name:req.name, role:req.role, color:req.color, online:true});
+  // Remove from pending
+  group.pendingRequests = group.pendingRequests.filter(function(r) { return r.id !== req.id; });
+
+  // Add to current session members
+  members.push({name:req.name, email:req.email, role:req.role, color:req.color, online:true, id:req.id});
+  activity.unshift({t: req.name + ' joined the family calendar!', c:'#1976D2'});
+
+  renderFam(); refreshHome(); setupTopbar();
+  alert(req.name + ' has been approved and can now access your family calendar!');
+}
+
+// Check for pending requests when admin logs in (simulate receiving requests)
+function checkPendingRequests() {
+  if (!user || !user.isAdmin || !window.myGroup) return;
+  var group = window.FAMILY_GROUPS.find(function(g) { return g.code === famCode; });
+  if (group && group.pendingRequests.length > 0) {
+    window.pendingRequest = group.pendingRequests[0];
+    window.pendingJoinGroup = group;
+    setTimeout(function() { showJoinRequest(group.pendingRequests[0], group); }, 1500);
+  }
+}
+
+function doGuest() {
+  user = {name:'Guest', email:'guest@family.com', role:'Guest', color:AV_COLORS[0], id:Date.now()};
+  members = [{...user, online:true}];
+  famCode = 'MBS-' + Math.floor(1000 + Math.random()*9000);
+  startApp();
+}
+
+function signOut() {
+  user = null; events = []; tasks = []; notes = []; members = []; activity = [];
+  document.getElementById('auth-screen').className = 'auth-wrap';
+  document.getElementById('greet-screen').className = 'greet-wrap hidden';
+  document.getElementById('main-app').className = 'app-wrap hidden';
+}
+
+// ===== START APP =====
+function startApp() {
+  document.getElementById('auth-screen').className = 'auth-wrap hidden';
+  showGreeting();
+  setTimeout(function() {
+    if ('Notification' in window && Notification.permission === 'default') {
+      document.getElementById('perm-modal').className = 'perm-modal open';
+    }
+  }, 2000);
+}
+
+// ===== GREETING =====
+function showGreeting() {
+  document.getElementById('main-app').className = 'app-wrap hidden';
+  document.getElementById('greet-screen').className = 'greet-wrap';
+  var h = getH();
+  var msg = h < 12 ? 'Good morning,' : h < 17 ? 'Good afternoon,' : 'Good evening,';
+  var now = new Date();
+  document.getElementById('g-time').textContent = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  document.getElementById('g-date').textContent = now.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
+  document.getElementById('g-msg').textContent = msg;
+  document.getElementById('g-name').textContent = user.name + '!';
+  var av = document.getElementById('g-av');
+  av.textContent = user.name[0].toUpperCase();
+  av.style.background = user.color;
+  var todayEvs = events.filter(function(e) { return e.date === today(); });
+  var gel = document.getElementById('g-events');
+  if (todayEvs.length) {
+    gel.innerHTML = todayEvs.map(function(e) {
+      return '<div class="greet-ev"><div class="greet-dot" style="background:'+e.color+';"></div><div class="greet-ev-txt">'+e.title+'</div><div class="greet-ev-time">'+(e.start||'')+'</div></div>';
+    }).join('');
+  } else {
+    gel.innerHTML = '<div style="font-size:13px;color:rgba(255,255,255,0.6);">No events today - enjoy your day!</div>';
+  }
+}
+
+function enterApp() {
+  document.getElementById('greet-screen').className = 'greet-wrap hidden';
+  document.getElementById('main-app').className = 'app-wrap';
+  setupTopbar();
+  refreshHome();
+  renderCal();
+  renderFam();
+  renderTasks();
+  renderNotes();
+  renderToday();
+  checkPendingRequests();
+}
+
+// ===== SETUP TOPBAR =====
+function setupTopbar() {
+  document.getElementById('fam-name-label').textContent = famName;
+  document.getElementById('inv-code-display').textContent = famCode;
+  var av = document.getElementById('chip-av');
+  av.textContent = user.name[0].toUpperCase();
+  av.style.background = user.color;
+  document.getElementById('chip-name').textContent = user.name;
+  var ta = document.getElementById('top-avatars');
+  ta.innerHTML = members.slice(0,4).map(function(m) {
+    return '<div style="width:30px;height:30px;border-radius:50%;background:'+m.color+';display:flex;align-items:center;justify-content:center;font-family:Fredoka One,cursive;font-size:12px;color:#fff;margin-left:-4px;border:2px solid #fff;">'+m.name[0]+'</div>';
+  }).join('');
+  renderFamOnline();
+  renderProfile();
+}
+
+function renderProfile() {
+  var pav = document.getElementById('profile-av');
+  pav.textContent = user.name[0].toUpperCase();
+  pav.style.background = user.color;
+  document.getElementById('profile-name').textContent = user.name;
+  document.getElementById('profile-email').textContent = user.email;
+  document.getElementById('profile-role').textContent = user.role;
+}
+
+// ===== HOME =====
+function refreshHome() {
+  var now = new Date();
+  var h = getH();
+  var msg = h < 12 ? 'Good morning, ' : h < 17 ? 'Good afternoon, ' : 'Good evening, ';
+  document.getElementById('home-greet').textContent = msg + user.name + '!';
+  document.getElementById('home-date').textContent = now.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
+  var monthEvs = events.filter(function(e) { var d=new Date(e.date+'T00:00:00'); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth(); });
+  var todayEvs = events.filter(function(e) { return e.date===today(); });
+  var pendTasks = tasks.filter(function(t) { return !t.done; });
+  document.getElementById('stat-events').textContent = monthEvs.length;
+  document.getElementById('stat-today').textContent = todayEvs.length;
+  document.getElementById('stat-tasks').textContent = pendTasks.length;
+  var upcomingEvs = events.filter(function(e){return e.date>=today();}).sort(function(a,b){return a.date.localeCompare(b.date);}).slice(0,5);
+  var hel = document.getElementById('home-events');
+  hel.innerHTML = upcomingEvs.length ? upcomingEvs.map(function(e) {
+    return '<div class="ev-item"><div class="ev-dot" style="background:'+e.color+';"></div><div style="flex:1;"><div class="ev-title">'+e.title+'</div><div class="ev-meta">'+fmtDate(e.date)+(e.start?' at '+e.start:'')+'</div></div><span class="ev-who" style="background:'+e.color+'22;color:'+e.color+';">'+e.who+'</span></div>';
+  }).join('') : '<div class="empty"><i class="ti ti-calendar"></i><p>No events yet!</p></div>';
+  var todayTasks = tasks.filter(function(t){return t.due===today();}).slice(0,4);
+  var htl = document.getElementById('home-tasks');
+  htl.innerHTML = todayTasks.length ? todayTasks.map(function(t) {
+    return '<div class="task-item"><div class="task-chk'+(t.done?' done':'')+'" onclick="toggleTask('+t.id+')">'+(t.done?'<i class="ti ti-check"></i>':'')+'</div><div class="task-txt'+(t.done?' done':'')+'" style="flex:1;">'+t.text+'</div><span class="task-who-badge" style="background:'+getMC(t.who)+'22;color:'+getMC(t.who)+';">'+t.who+'</span></div>';
+  }).join('') : '<div class="empty"><i class="ti ti-checkbox"></i><p>No tasks today!</p></div>';
+  var hal = document.getElementById('home-activity');
+  hal.innerHTML = activity.length ? activity.slice(0,5).map(function(a) {
+    return '<div class="ev-item"><div class="ev-dot" style="background:'+a.c+';"></div><div class="ev-title">'+a.t+'</div></div>';
+  }).join('') : '<div style="font-size:12px;color:#37587A;">Activity shows here.</div>';
+  renderNotifs();
+}
+
+// ===== PAGES =====
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(function(el) { el.className = 'page'; });
+  document.querySelectorAll('.nav-item').forEach(function(el) { el.className = 'nav-item'; });
+  document.getElementById('page-'+p).className = 'page active';
+  document.getElementById('nav-'+p).className = 'nav-item active';
+  if (p==='home') refreshHome();
+  if (p==='calendar') renderCal();
+  if (p==='today') renderToday();
+  if (p==='family') renderFam();
+  if (p==='tasks') renderTasks();
+  if (p==='notes') renderNotes();
+  if (p==='profile') renderProfile();
+}
+
+// ===== CALENDAR =====
+function renderCal() {
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-lbl').textContent = months[calM] + ' ' + calY;
+  var grid = document.getElementById('cal-grid');
+  var first = new Date(calY, calM, 1).getDay();
+  var days = new Date(calY, calM+1, 0).getDate();
+  var prev = new Date(calY, calM, 0).getDate();
+  var now = new Date();
+  var html = '';
+  for (var i=0; i<first; i++) {
+    html += '<div class="cal-day other"><span class="cal-dn">'+(prev-first+1+i)+'</span></div>';
+  }
+  for (var d=1; d<=days; d++) {
+    var ds = calY+'-'+pad(calM+1)+'-'+pad(d);
+    var isToday = d===now.getDate()&&calM===now.getMonth()&&calY===now.getFullYear();
+    var isSel = ds===selDate;
+    var dayEvs = events.filter(function(e){return e.date===ds;});
+    var evHtml = dayEvs.slice(0,2).map(function(e){return '<div class="cal-ev" style="background:'+e.color+';">'+e.title+'</div>';}).join('');
+    var cls = 'cal-day'+(isToday?' today':'')+(isSel?' sel':'');
+    html += '<div class="'+cls+'" data-date="'+ds+'" onclick="clickCalDay(this)"><span class="cal-dn">'+d+'</span>'+evHtml+'</div>';
+  }
+  var rem = (7-((first+days)%7))%7;
+  for (var j=1; j<=rem; j++) {
+    html += '<div class="cal-day other"><span class="cal-dn">'+j+'</span></div>';
+  }
+  grid.innerHTML = html;
+  renderCalEvents(null);
+}
+
+function clickCalDay(el) {
+  selDate = el.getAttribute('data-date');
+  renderCal();
+  document.getElementById('cal-events-lbl').textContent = fmtDate(selDate);
+  renderCalEvents(selDate);
+}
+
+function renderCalEvents(ds) {
+  var evs = ds ? events.filter(function(e){return e.date===ds;}) : events.filter(function(e){return e.date>=today();}).slice(0,8);
+  var el = document.getElementById('cal-events-list');
+  el.innerHTML = evs.length ? evs.map(function(e) {
+    return '<div class="ev-item"><div class="ev-dot" style="background:'+e.color+';"></div><div style="flex:1;"><div class="ev-title">'+e.title+'</div><div class="ev-meta">'+fmtDate(e.date)+(e.start?' at '+e.start:'')+'</div></div><span class="ev-who" style="background:'+e.color+'22;color:'+e.color+';">'+e.who+'</span><button class="ev-del" onclick="delEvent('+e.id+')"><i class="ti ti-trash"></i></button></div>';
+  }).join('') : '<div class="empty"><i class="ti ti-calendar"></i><p>No events!</p></div>';
+}
+
+// ===== TODAY =====
+function renderToday() {
+  document.getElementById('today-date-lbl').textContent = new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+  var evs = events.filter(function(e){return e.date===today();}).sort(function(a,b){return (a.start||'').localeCompare(b.start||'');});
+  var el = document.getElementById('today-list');
+  el.innerHTML = evs.length ? evs.map(function(e) {
+    return '<div class="card" style="border-left:4px solid '+e.color+';"><div style="font-size:14px;font-weight:800;color:#0D1B3E;">'+e.title+'</div><div style="font-size:12px;color:#37587A;margin-top:3px;">'+(e.start?e.start+' - '+e.end:'All day')+' &middot; '+e.who+(e.notes?' &middot; '+e.notes:'')+'</div></div>';
+  }).join('') : '<div class="empty"><i class="ti ti-sun"></i><p>Nothing scheduled today!</p></div>';
+}
+
+// ===== EVENTS =====
+function openEventModal() {
+  document.getElementById('ev-title').value = '';
+  document.getElementById('ev-date').value = selDate || today();
+  document.getElementById('ev-start').value = '09:00';
+  document.getElementById('ev-end').value = '10:00';
+  document.getElementById('ev-notes').value = '';
+  selColor = '#1976D2'; selCat = 'Family';
+  document.querySelectorAll('.color-dot').forEach(function(d){d.classList.remove('sel');});
+  document.getElementById('col-1976D2').classList.add('sel');
+  document.querySelectorAll('.cat-btn').forEach(function(b){b.className='cat-btn';});
+  document.getElementById('cat-Family').className = 'cat-btn active';
+  fillWho();
+  document.getElementById('event-modal').className = 'modal-bg open';
+}
+
+function saveEvent() {
+  var title = document.getElementById('ev-title').value.trim();
+  if (!title) { alert('Please enter an event title!'); return; }
+  var ev = {
+    id: Date.now(), title: title,
+    date: document.getElementById('ev-date').value || today(),
+    start: document.getElementById('ev-start').value,
+    end: document.getElementById('ev-end').value,
+    color: selColor, category: selCat,
+    notes: document.getElementById('ev-notes').value,
+    who: document.getElementById('ev-who').value || user.name,
+    addedBy: user.name
+  };
+  events.push(ev);
+  activity.unshift({t: user.name + ' added "' + title + '"', c: selColor});
+  document.getElementById('event-modal').className = 'modal-bg';
+  refreshHome(); renderCal(); renderToday();
+}
+
+function delEvent(id) {
+  events = events.filter(function(e){return e.id!==id;});
+  renderCal(); renderCalEvents(selDate); refreshHome(); renderToday();
+}
+
+// ===== FAMILY =====
+function renderFam() {
+  // Show pending requests for admin
+  if (user && user.isAdmin && window.myGroup && window.myGroup.pendingRequests.length > 0) {
+    document.getElementById('pending-requests-section').className = '';
+    var prl = document.getElementById('pending-req-list');
+    prl.innerHTML = window.myGroup.pendingRequests.map(function(req) {
+      return '<div style="background:#FFF8E1;border:2px solid #F57F17;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">' +
+        '<div style="width:38px;height:38px;border-radius:50%;background:'+req.color+';display:flex;align-items:center;justify-content:center;font-family:Fredoka One,cursive;font-size:16px;color:#fff;flex-shrink:0;">'+req.name[0]+'</div>' +
+        '<div style="flex:1;"><div style="font-size:13px;font-weight:800;color:#0D1B3E;">'+req.name+'</div>' +
+        '<div style="font-size:11px;color:#37587A;">'+req.role+' &middot; '+req.email+'</div>' +
+        '<span class="pending-badge">Waiting for approval</span></div>' +
+        '<div style="display:flex;gap:6px;">' +
+        '<button class="bigbtn btn-sm" style="background:#FFEBEE;color:#C62828;" onclick="rejectFromFam('+req.id+')">Reject</button>' +
+        '<button class="bigbtn btn-blue btn-sm" onclick="approveFromFam('+req.id+')">Approve</button>' +
+        '</div></div>';
+    }).join('');
+  } else {
+    var ps = document.getElementById('pending-requests-section');
+    if (ps) ps.className = 'hidden';
+  }
+
+  var fg = document.getElementById('fam-grid');
+  fg.innerHTML = members.map(function(m) {
+    var cnt = events.filter(function(e){return e.who===m.name;}).length;
+    return '<div class="fam-card"><div class="fam-card-av" style="background:'+m.color+';">'+m.name[0]+'</div><div class="fam-card-name">'+m.name+'</div><div class="fam-card-role">'+m.role+'</div><div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#E3F2FD;color:#0D47A1;margin-top:4px;display:inline-block;">'+cnt+' events</div></div>';
+  }).join('');
+  document.getElementById('fam-count-lbl').textContent = members.length + ' member' + (members.length!==1?'s':'');
+  renderFamOnline();
+}
+
+function renderFamOnline() {
+  var el = document.getElementById('fam-online-list');
+  if (!el) return;
+  el.innerHTML = members.map(function(m) {
+    return '<div class="fam-mem"><div class="fam-av" style="background:'+m.color+';">'+m.name[0]+'</div><div class="fam-name">'+m.name+'</div><div class="fam-dot" style="background:'+(m.online?'#2E7D32':'#ccc')+';"></div></div>';
+  }).join('');
+}
+
+function saveInvite() {
+  var name = document.getElementById('inv-name').value.trim();
+  if (!name) { alert('Please enter a name!'); return; }
+  var role = document.getElementById('inv-role').value;
+  members.push({id:Date.now(), name:name, email:document.getElementById('inv-email').value, role:role, color:AV_COLORS[members.length%AV_COLORS.length], online:false});
+  activity.unshift({t: user.name + ' invited ' + name, c: '#1976D2'});
+  document.getElementById('invite-modal').className = 'modal-bg';
+  renderFam(); refreshHome(); setupTopbar();
+  alert(name + ' has been invited to your family calendar!');
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(famCode).then(function(){alert('Code copied: '+famCode);}).catch(function(){alert('Code: '+famCode);});
+}
+
+function approveFromFam(reqId) {
+  if (!window.myGroup) return;
+  var req = window.myGroup.pendingRequests.find(function(r){return r.id===reqId;});
+  if (!req) return;
+  window.pendingRequest = req;
+  window.pendingJoinGroup = window.myGroup;
+  approveJoinRequest();
+  renderFam();
+}
+function rejectFromFam(reqId) {
+  if (!window.myGroup) return;
+  window.myGroup.pendingRequests = window.myGroup.pendingRequests.filter(function(r){return r.id!==reqId;});
+  renderFam();
+  alert('Request rejected.');
+}
+
+// ===== TASKS =====
+function saveTask() {
+  var text = document.getElementById('task-inp').value.trim();
+  if (!text) { alert('Please enter a task!'); return; }
+  tasks.push({id:Date.now(), text:text, who:document.getElementById('task-who').value||user.name, done:false, due:document.getElementById('task-due').value||today()});
+  activity.unshift({t: user.name + ' added task: "' + text + '"', c: '#2E7D32'});
+  document.getElementById('task-modal').className = 'modal-bg';
+  document.getElementById('task-inp').value = '';
+  renderTasks(); refreshHome();
+}
+
+function toggleTask(id) {
+  var t = tasks.find(function(t){return t.id===id;});
+  if (t) { t.done = !t.done; if(t.done) activity.unshift({t:user.name+' completed "'+t.text+'"',c:'#2E7D32'}); }
+  renderTasks(); refreshHome();
+}
+
+function delTask(id) { tasks = tasks.filter(function(t){return t.id!==id;}); renderTasks(); refreshHome(); }
+
+function renderTasks() {
+  var el = document.getElementById('task-list');
+  el.innerHTML = tasks.length ? tasks.map(function(t) {
+    return '<div class="task-item"><div class="task-chk'+(t.done?' done':'')+'" onclick="toggleTask('+t.id+')">'+(t.done?'<i class="ti ti-check"></i>':'')+'</div><div class="task-txt'+(t.done?' done':'')+'">'+t.text+'</div><span style="font-size:10px;color:#37587A;font-weight:700;">'+fmtDate(t.due)+'</span><span class="task-who-badge" style="background:'+getMC(t.who)+'22;color:'+getMC(t.who)+';">'+t.who+'</span><button class="task-del" onclick="delTask('+t.id+')"><i class="ti ti-trash"></i></button></div>';
+  }).join('') : '<div class="empty"><i class="ti ti-checkbox"></i><p>No tasks yet!</p></div>';
+}
+
+// ===== NOTES =====
+function saveNote() {
+  var title = document.getElementById('note-title-inp').value.trim();
+  if (!title) { alert('Please enter a title!'); return; }
+  notes.unshift({id:Date.now(), title:title, body:document.getElementById('note-body-inp').value, author:user.name, date:today()});
+  activity.unshift({t: user.name + ' added note: "' + title + '"', c: '#F57F17'});
+  document.getElementById('note-modal').className = 'modal-bg';
+  document.getElementById('note-title-inp').value = '';
+  document.getElementById('note-body-inp').value = '';
+  renderNotes(); refreshHome();
+}
+
+function delNote(id) { notes = notes.filter(function(n){return n.id!==id;}); renderNotes(); }
+
+function renderNotes() {
+  var el = document.getElementById('notes-list');
+  el.innerHTML = notes.length ? notes.map(function(n) {
+    return '<div class="note-card"><div class="note-title">'+n.title+'</div><div class="note-body">'+n.body+'</div><div class="note-foot"><span class="note-author">By '+n.author+' &middot; '+fmtDate(n.date)+'</span><button class="task-del" onclick="delNote('+n.id+')"><i class="ti ti-trash"></i></button></div></div>';
+  }).join('') : '<div class="empty"><i class="ti ti-notes"></i><p>No notes yet!</p></div>';
+}
+
+// ===== NOTIFICATIONS =====
+function toggleNotif() {
+  notifOpen = !notifOpen;
+  document.getElementById('notif-panel').className = 'notif-panel' + (notifOpen?' open':'');
+  renderNotifs();
+}
+
+function renderNotifs() {
+  var todayEvs = events.filter(function(e){return e.date===today();});
+  var pend = tasks.filter(function(t){return !t.done&&t.due===today();});
+  var items = [];
+  todayEvs.forEach(function(e){ items.push('<div style="padding:8px 0;border-bottom:1px solid #BBDEFB;"><div style="font-size:12px;font-weight:700;color:#0D1B3E;">'+e.title+(e.start?' at '+e.start:'')+'</div><div style="font-size:11px;color:#37587A;">For: '+e.who+'</div></div>'); });
+  if (pend.length) items.push('<div style="padding:8px 0;"><div style="font-size:12px;font-weight:700;color:#0D1B3E;">'+pend.length+' task'+(pend.length>1?'s':'')+' due today</div></div>');
+  document.getElementById('notif-list').innerHTML = items.length ? items.join('') : '<div style="font-size:12px;color:#37587A;">No notifications right now!</div>';
+}
+
+function allowNotif() {
+  document.getElementById('perm-modal').className = 'perm-modal';
+  if ('Notification' in window) {
+    Notification.requestPermission().then(function(p) {
+      notifGranted = p === 'granted';
+      if (notifGranted) {
+        new Notification('MBS Family Calendar', {body: 'Notifications are on! You will get daily reminders.'});
+        scheduleNotifs();
+      }
+    });
+  }
+}
+
+function denyNotif() { document.getElementById('perm-modal').className = 'perm-modal'; }
+
+function scheduleNotifs() {
+  setInterval(function() {
+    if (!notifGranted) return;
+    var now = new Date();
+    var h = now.getHours(); var m = now.getMinutes();
+    if (h===7 && m===0) {
+      var evs = events.filter(function(e){return e.date===today();});
+      new Notification('Good morning, '+user.name+'!', {body: evs.length ? 'You have '+evs.length+' event'+(evs.length>1?'s':'')+' today!' : 'No events today - enjoy your day!'});
+    }
+    events.forEach(function(e) {
+      if (e.date===today() && e.start) {
+        var parts = e.start.split(':');
+        var evM = parseInt(parts[0])*60 + parseInt(parts[1]);
+        var nowM = h*60 + m;
+        if (evM - nowM === 60) new Notification('Coming up in 1 hour!', {body: e.title + (e.who?' ('+e.who+')':'')});
+      }
+    });
+  }, 60000);
+}
+
+// ===== SHARE SCHEDULE =====
+function shareSchedule() {
+  var now = new Date();
+  var h = getH();
+  var greet = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  var evs = events.filter(function(e){return e.date===today();}).sort(function(a,b){return (a.start||'').localeCompare(b.start||'');});
+  var ts = tasks.filter(function(t){return t.due===today()&&!t.done;});
+  var msg = greet + ', ' + user.name + '!\n';
+  msg += now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'}) + '\n';
+  msg += '------------------------\n';
+  msg += 'MBS Family Calendar\n\n';
+  if (evs.length) {
+    msg += "TODAY'S SCHEDULE:\n";
+    evs.forEach(function(e){ msg += (e.start||'All day') + ' - ' + e.title + (e.who?' ('+e.who+')':'') + '\n'; });
+  } else { msg += 'No events today!\n'; }
+  if (ts.length) {
+    msg += "\nTODAY'S TASKS:\n";
+    ts.forEach(function(t){ msg += '- ' + t.text + ' (' + t.who + ')\n'; });
+  }
+  msg += '\n💙 Have a great day!\n- MBS Family Calendar';
+  if (navigator.share) {
+    navigator.share({title:'MBS Family Schedule', text:msg}).catch(function(){copyMsg(msg);});
+  } else { copyMsg(msg); }
+}
+
+function copyMsg(msg) {
+  navigator.clipboard.writeText(msg).then(function(){alert('Schedule copied! Paste it in a text or email.');}).catch(function(){
+    window.open('mailto:?subject=MBS Family Schedule&body='+encodeURIComponent(msg));
+  });
+}
+
+// ===== HELPERS =====
+function fillWho() {
+  var opts = members.map(function(m){return '<option>'+m.name+'</option>';}).join('');
+  ['ev-who','task-who'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=opts; });
+}
+
+function getMC(name) {
+  var m = members.find(function(m){return m.name===name;});
+  return m ? m.color : '#1976D2';
+}
+</script>
+</body>
+</html>

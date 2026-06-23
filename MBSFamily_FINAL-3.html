@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MBS Family Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#E3F2FD;min-height:100vh;}
+
+/* UTILS */
+.hide{display:none!important;}
+.page{display:none!important;}.page.show{display:block!important;}
+
+/* BUTTONS */
+.btn{border:none;border-radius:13px;padding:12px 18px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;width:100%;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn:active{transform:scale(0.98);}
+.btn-blue{background:#1565C0;color:#fff;}
+.btn-out{background:#fff;color:#1565C0;border:2px solid #1565C0;}
+.btn-red{background:#FFEBEE;color:#C62828;}
+.btn-sm{width:auto;padding:7px 14px;font-size:13px;border-radius:11px;margin-bottom:0;}
+.btn-green{background:#1B5E20;color:#fff;}
+
+/* INPUTS */
+.lbl{font-size:12px;font-weight:800;color:#0D47A1;margin-bottom:4px;display:block;margin-top:8px;}
+.inp{width:100%;border:2px solid #90CAF9;border-radius:11px;padding:10px 13px;font-family:'Nunito',sans-serif;font-size:14px;color:#0D1B3E;background:#E3F2FD;outline:none;}
+.inp:focus{border-color:#1565C0;}
+
+/* SCREEN: AUTH */
+#screen-auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.auth-card{background:#fff;border-radius:24px;padding:30px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(21,101,192,0.15);}
+.auth-logo{text-align:center;margin-bottom:22px;}
+.auth-ico{width:62px;height:62px;background:#1565C0;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.auth-ico i{font-size:30px;color:#fff;}
+.auth-name{font-family:'Fredoka One',cursive;font-size:24px;color:#0D1B3E;}
+.auth-tag{font-size:12px;color:#546E7A;margin-top:3px;}
+.tabs{display:flex;background:#E3F2FD;border-radius:12px;padding:4px;margin-bottom:18px;}
+.tab{flex:1;padding:9px;border:none;background:transparent;border-radius:9px;font-family:'Fredoka One',cursive;font-size:14px;color:#546E7A;cursor:pointer;}
+.tab.on{background:#fff;color:#1565C0;box-shadow:0 2px 8px rgba(21,101,192,0.1);}
+.div{text-align:center;color:#90A4AE;font-size:12px;font-weight:700;margin:10px 0;position:relative;}
+.div::before,.div::after{content:'';position:absolute;top:50%;width:43%;height:1px;background:#BBDEFB;}
+.div::before{left:0;}.div::after{right:0;}
+
+/* STEP indicators */
+.step-wrap{margin-bottom:16px;}
+.step-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.step-back{background:none;border:none;cursor:pointer;font-size:13px;font-weight:700;color:#1565C0;display:flex;align-items:center;gap:5px;}
+.step-title{font-family:'Fredoka One',cursive;font-size:16px;color:#0D1B3E;}
+.option-card{border:2px solid #BBDEFB;border-radius:14px;padding:13px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.15s;}
+.option-card:hover,.option-card.sel{border-color:#1565C0;background:#E3F2FD;}
+.opt-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.opt-title{font-size:14px;font-weight:800;color:#0D1B3E;}
+.opt-sub{font-size:11px;color:#546E7A;margin-top:1px;}
+.search-row{display:flex;gap:8px;margin-bottom:10px;}
+.search-row .inp{margin-bottom:0;flex:1;}
+.fam-result{border:2px solid #BBDEFB;border-radius:13px;padding:12px;margin-bottom:8px;cursor:pointer;}
+.fam-result:hover{border-color:#1565C0;background:#E3F2FD;}
+.fam-result-name{font-size:14px;font-weight:800;color:#0D1B3E;}
+.fam-result-meta{font-size:11px;color:#546E7A;margin-top:2px;}
+.fam-result-members{display:flex;gap:4px;margin-top:8px;align-items:center;flex-wrap:wrap;}
+.mini-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:10px;color:#fff;flex-shrink:0;}
+.member-name-tag{font-size:10px;font-weight:700;color:#546E7A;}
+.pending-box{background:#FFF8E1;border:2px solid #F9A825;border-radius:13px;padding:16px;text-align:center;margin-top:10px;}
+.pending-icon{font-size:36px;margin-bottom:8px;}
+.pending-title{font-family:'Fredoka One',cursive;font-size:16px;color:#E65100;margin-bottom:6px;}
+.pending-msg{font-size:12px;color:#546E7A;line-height:1.6;}
+.info-box{background:#E3F2FD;border-radius:11px;padding:11px 13px;margin-bottom:12px;font-size:12px;color:#1565C0;line-height:1.6;}
+
+/* SCREEN: GREETING */
+#screen-greet{min-height:100vh;background:linear-gradient(150deg,#0D47A1 0%,#1565C0 50%,#1976D2 100%);display:flex;align-items:center;justify-content:center;padding:20px;}
+.greet-box{width:100%;max-width:400px;text-align:center;}
+.greet-av{width:80px;height:80px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:32px;color:#fff;border:3px solid rgba(255,255,255,0.35);}
+.greet-time{font-family:'Fredoka One',cursive;font-size:58px;color:#fff;line-height:1;letter-spacing:-1px;}
+.greet-date{font-size:13px;color:rgba(255,255,255,0.65);font-weight:700;margin:4px 0 14px;}
+.greet-hello{font-family:'Fredoka One',cursive;font-size:26px;color:#fff;}
+.greet-name{font-family:'Fredoka One',cursive;font-size:42px;color:#90CAF9;margin-bottom:18px;}
+.greet-schedule{background:rgba(255,255,255,0.13);border-radius:16px;padding:14px 16px;margin-bottom:14px;text-align:left;}
+.gs-title{font-family:'Fredoka One',cursive;font-size:14px;color:#fff;margin-bottom:10px;}
+.gs-item{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.12);}
+.gs-item:last-child{border:none;}
+.gs-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.gs-txt{font-size:13px;color:#fff;font-weight:700;flex:1;}
+.gs-time{font-size:11px;color:rgba(255,255,255,0.6);}
+.greet-enter{width:100%;border:none;background:#fff;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:16px;color:#1565C0;cursor:pointer;margin-bottom:9px;}
+.greet-share{width:100%;border:2px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.12);border-radius:14px;padding:11px;font-family:'Fredoka One',cursive;font-size:14px;color:#fff;cursor:pointer;margin-bottom:10px;}
+.greet-tip{background:rgba(255,255,255,0.08);border-radius:12px;padding:10px 13px;font-size:11px;color:rgba(255,255,255,0.65);line-height:1.6;}
+
+/* SCREEN: APP */
+#screen-app{display:none;}
+.topbar{background:#fff;padding:11px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(21,101,192,0.08);}
+.top-left{display:flex;align-items:center;gap:9px;}
+.top-ico{width:34px;height:34px;background:#1565C0;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.top-ico i{font-size:17px;color:#fff;}
+.top-appname{font-family:'Fredoka One',cursive;font-size:18px;color:#0D1B3E;}
+.top-famname{font-size:11px;color:#546E7A;font-weight:700;}
+.top-right{display:flex;align-items:center;gap:7px;}
+.top-avs{display:flex;}
+.top-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:11px;color:#fff;margin-left:-5px;border:2px solid #fff;cursor:pointer;}
+.notif-btn{width:33px;height:33px;background:#E3F2FD;border-radius:9px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;}
+.notif-btn i{font-size:16px;color:#1565C0;}
+.notif-dot{width:7px;height:7px;background:#E53935;border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid #fff;}
+.chip{display:flex;align-items:center;gap:6px;background:#E3F2FD;border-radius:20px;padding:4px 11px 4px 4px;cursor:pointer;}
+.chip-av{width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:10px;color:#fff;}
+.chip-name{font-size:12px;font-weight:800;color:#0D47A1;}
+
+.app-body{display:grid;grid-template-columns:185px 1fr;min-height:calc(100vh - 56px);}
+.sidebar{background:#fff;padding:14px 8px;border-right:2px solid #E3F2FD;}
+.nav-sec{font-size:10px;font-weight:800;color:#90CAF9;letter-spacing:1.5px;text-transform:uppercase;padding:8px 11px 3px;}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:11px;border:none;background:transparent;width:100%;text-align:left;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:#546E7A;cursor:pointer;margin-bottom:3px;}
+.nav-btn:hover{background:#E3F2FD;color:#0D47A1;}
+.nav-btn.on{background:#1565C0;color:#fff;}
+.nav-btn i{font-size:16px;}
+.sidebar-fam{margin-top:12px;background:#E3F2FD;border-radius:12px;padding:11px;}
+.sf-title{font-family:'Fredoka One',cursive;font-size:12px;color:#0D47A1;margin-bottom:7px;}
+.sf-mem{display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid rgba(21,101,192,0.08);}
+.sf-mem:last-child{border:none;}
+.sf-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:9px;color:#fff;flex-shrink:0;}
+.sf-name{font-size:11px;font-weight:700;color:#0D1B3E;flex:1;}
+.sf-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+.content{padding:18px 20px;}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.ph-title{font-family:'Fredoka One',cursive;font-size:22px;color:#0D1B3E;}
+.ph-sub{font-size:12px;font-weight:700;color:#546E7A;margin-top:2px;}
+.ph-btns{display:flex;gap:8px;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px;}
+.stat{border-radius:13px;padding:13px;text-align:center;}
+.stat-n{font-family:'Fredoka One',cursive;font-size:26px;}
+.stat-l{font-size:10px;font-weight:800;margin-top:1px;}
+
+/* CARDS */
+.card{background:#fff;border:2px solid #BBDEFB;border-radius:14px;padding:12px 14px;margin-bottom:10px;}
+.card-title{font-family:'Fredoka One',cursive;font-size:14px;color:#0D1B3E;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+
+/* EVENTS LIST */
+.ev-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1.5px dashed #BBDEFB;}
+.ev-row:last-child{border:none;}
+.ev-bar{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.ev-title{font-size:13px;font-weight:700;color:#0D1B3E;}
+.ev-meta{font-size:11px;color:#546E7A;}
+.ev-who{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:auto;white-space:nowrap;}
+.ev-del{background:#FFEBEE;border:none;border-radius:7px;padding:4px 7px;cursor:pointer;color:#C62828;font-size:12px;flex-shrink:0;}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-month{font-family:'Fredoka One',cursive;font-size:19px;color:#0D1B3E;}
+.cal-nb{width:30px;height:30px;background:#E3F2FD;border:none;border-radius:8px;cursor:pointer;font-size:14px;color:#1565C0;}
+.cal-days-hd{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;}
+.cal-dh{text-align:center;font-size:10px;font-weight:800;color:#546E7A;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{border-radius:9px;padding:5px 3px;min-height:60px;border:2px solid transparent;cursor:pointer;}
+.cal-cell:hover{border-color:#1565C0;background:#E3F2FD;}
+.cal-cell.is-today{background:#1565C0;}
+.cal-cell.is-today .cal-dn{color:#fff;}
+.cal-cell.is-other{opacity:0.3;}
+.cal-cell.is-sel{border-color:#E53935;background:#FFEBEE;}
+.cal-dn{font-size:12px;font-weight:800;color:#0D1B3E;display:block;text-align:center;margin-bottom:2px;}
+.cal-ev-chip{border-radius:4px;padding:1px 4px;font-size:8px;font-weight:800;color:#fff;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+
+/* TODAY TIMELINE */
+.tl-item{display:flex;gap:12px;margin-bottom:12px;}
+.tl-time{font-size:11px;font-weight:800;color:#546E7A;width:48px;text-align:right;padding-top:2px;flex-shrink:0;}
+.tl-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.tl-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.tl-bar{width:2px;flex:1;background:#BBDEFB;margin-top:3px;}
+.tl-content{flex:1;background:#E3F2FD;border-radius:11px;padding:9px 12px;}
+.tl-title{font-size:13px;font-weight:800;color:#0D1B3E;}
+.tl-meta{font-size:11px;color:#546E7A;margin-top:2px;}
+
+/* TASKS */
+.task-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border:2px solid #BBDEFB;border-radius:12px;margin-bottom:7px;}
+.task-chk{width:22px;height:22px;border-radius:7px;border:2px solid #BBDEFB;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;}
+.task-chk.done{background:#1565C0;border-color:#1565C0;}
+.task-chk.done i{color:#fff;font-size:12px;}
+.task-txt{font-size:13px;font-weight:700;color:#0D1B3E;flex:1;}
+.task-txt.done{text-decoration:line-through;color:#90A4AE;}
+.task-who-chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.task-del{background:#FFEBEE;border:none;border-radius:7px;padding:4px 7px;cursor:pointer;color:#C62828;font-size:11px;}
+
+/* NOTES */
+.note-card{background:#fff;border:2px solid #BBDEFB;border-radius:13px;padding:12px 14px;margin-bottom:9px;cursor:pointer;}
+.note-card:hover{border-color:#1565C0;}
+.note-title{font-size:14px;font-weight:800;color:#0D1B3E;}
+.note-body{font-size:12px;color:#546E7A;margin-top:3px;line-height:1.5;}
+.note-foot{display:flex;align-items:center;justify-content:space-between;margin-top:7px;}
+.note-author{font-size:10px;font-weight:700;color:#90A4AE;}
+
+/* FAMILY */
+.fam-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;margin-bottom:14px;}
+.fam-card{background:#fff;border:2px solid #BBDEFB;border-radius:15px;padding:14px;text-align:center;}
+.fam-card:hover{border-color:#1565C0;}
+.fc-av{width:50px;height:50px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:20px;color:#fff;}
+.fc-name{font-size:13px;font-weight:800;color:#0D1B3E;}
+.fc-role{font-size:10px;color:#546E7A;margin-top:1px;}
+.fc-count{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#E3F2FD;color:#0D47A1;margin-top:5px;display:inline-block;}
+.invite-box{background:#E3F2FD;border:2px dashed #1565C0;border-radius:15px;padding:18px;text-align:center;margin-top:4px;}
+.inv-code{font-family:'Fredoka One',cursive;font-size:28px;color:#1565C0;letter-spacing:4px;margin:7px 0 12px;}
+.pending-section{margin-bottom:14px;}
+.ps-title{font-family:'Fredoka One',cursive;font-size:15px;color:#E65100;margin-bottom:8px;}
+.req-card{background:#FFF8E1;border:2px solid #F9A825;border-radius:12px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:10px;}
+.req-info{flex:1;}
+.req-name{font-size:13px;font-weight:800;color:#0D1B3E;}
+.req-meta{font-size:11px;color:#546E7A;}
+.req-btns{display:flex;gap:6px;}
+
+/* MODALS */
+.modal-bg{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal-box{background:#fff;border-radius:22px;padding:22px;max-width:430px;width:90%;max-height:90vh;overflow-y:auto;position:relative;}
+.modal-title{font-family:'Fredoka One',cursive;font-size:20px;color:#0D1B3E;margin-bottom:13px;}
+.modal-close{position:absolute;top:11px;right:11px;background:#FFEBEE;border:none;border-radius:8px;width:27px;height:27px;cursor:pointer;color:#C62828;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;}
+.color-row{display:flex;gap:8px;margin-bottom:10px;margin-top:4px;}
+.color-dot{width:25px;height:25px;border-radius:50%;cursor:pointer;border:3px solid transparent;}
+.color-dot.on{border-color:#0D1B3E;}
+.cat-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;margin-top:4px;}
+.cat-chip{padding:5px 11px;border-radius:20px;border:2px solid #BBDEFB;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#546E7A;}
+.cat-chip.on{background:#1565C0;border-color:#1565C0;color:#fff;}
+
+/* NOTIF PANEL */
+.notif-panel{display:none;position:fixed;top:62px;right:14px;width:290px;background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.14);z-index:200;padding:13px;}
+.notif-panel.open{display:block;}
+.np-title{font-family:'Fredoka One',cursive;font-size:14px;color:#0D1B3E;margin-bottom:9px;}
+.np-item{padding:8px 0;border-bottom:1px solid #E3F2FD;font-size:12px;font-weight:700;color:#0D1B3E;}
+.np-item:last-child{border:none;}
+.np-sub{font-size:11px;color:#546E7A;font-weight:400;margin-top:1px;}
+
+/* PERM MODAL */
+.perm-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:300;align-items:center;justify-content:center;}
+.perm-modal.open{display:flex;}
+.perm-box{background:#fff;border-radius:22px;padding:26px;max-width:360px;width:90%;text-align:center;}
+
+/* JOIN REQ MODAL */
+.jr-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:300;align-items:center;justify-content:center;}
+.jr-modal.open{display:flex;}
+.jr-box{background:#fff;border-radius:22px;padding:24px;max-width:380px;width:90%;text-align:center;}
+
+.empty{text-align:center;padding:28px;color:#546E7A;}
+.empty i{font-size:38px;color:#BBDEFB;display:block;margin-bottom:7px;}
+.empty p{font-family:'Fredoka One',cursive;font-size:14px;}
+</style>
+</head>
+<body>
+
+<!-- PERM MODAL -->
+<div class="perm-modal" id="perm-modal">
+  <div class="perm-box">
+    <div style="font-size:48px;margin-bottom:10px;">🔔</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#0D1B3E;margin-bottom:8px;">Stay in the loop!</div>
+    <p style="font-size:13px;color:#546E7A;margin-bottom:18px;line-height:1.6;">Get daily schedule reminders and event notifications from MBS Family Calendar!</p>
+    <button class="btn btn-blue" id="allow-notif-btn">Allow notifications</button>
+    <button class="btn btn-out" id="deny-notif-btn">Not now</button>
+  </div>
+</div>
+
+<!-- JOIN REQUEST MODAL -->
+<div class="jr-modal" id="jr-modal">
+  <div class="jr-box">
+    <div style="font-size:44px;margin-bottom:10px;">🔔</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#0D1B3E;margin-bottom:8px;">New join request!</div>
+    <p style="font-size:13px;color:#546E7A;margin-bottom:14px;"><strong id="jr-name"></strong> wants to join <strong id="jr-famname"></strong></p>
+    <div style="background:#E3F2FD;border-radius:11px;padding:11px;margin-bottom:14px;text-align:left;font-size:12px;color:#546E7A;" id="jr-details"></div>
+    <p style="font-size:12px;color:#546E7A;margin-bottom:14px;">Approve them to give access to your family calendar?</p>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-red btn-sm" id="jr-reject-btn" style="flex:1;">Reject</button>
+      <button class="btn btn-blue btn-sm" id="jr-approve-btn" style="flex:1;">Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
+<div class="modal-bg" id="ev-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="ev-close">X</button>
+    <div class="modal-title">Add event</div>
+    <label class="lbl">Title</label><input class="inp" id="ev-title" type="text" placeholder="e.g. Doctor appointment" style="margin-top:4px;"/>
+    <label class="lbl">Date</label><input class="inp" id="ev-date" type="date" style="margin-top:4px;"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div><label class="lbl">Start</label><input class="inp" id="ev-start" type="time" style="margin-top:4px;"/></div>
+      <div><label class="lbl">End</label><input class="inp" id="ev-end" type="time" style="margin-top:4px;"/></div>
+    </div>
+    <label class="lbl">Category</label>
+    <div class="cat-row">
+      <button class="cat-chip on" data-cat="Family">Family</button>
+      <button class="cat-chip" data-cat="School">School</button>
+      <button class="cat-chip" data-cat="Health">Health</button>
+      <button class="cat-chip" data-cat="Sports">Sports</button>
+      <button class="cat-chip" data-cat="Birthday">Birthday</button>
+      <button class="cat-chip" data-cat="Work">Work</button>
+      <button class="cat-chip" data-cat="Other">Other</button>
+    </div>
+    <label class="lbl">Color</label>
+    <div class="color-row">
+      <div class="color-dot on" data-col="#1565C0" style="background:#1565C0;"></div>
+      <div class="color-dot" data-col="#C62828" style="background:#C62828;"></div>
+      <div class="color-dot" data-col="#1B5E20" style="background:#1B5E20;"></div>
+      <div class="color-dot" data-col="#E65100" style="background:#E65100;"></div>
+      <div class="color-dot" data-col="#6A1B9A" style="background:#6A1B9A;"></div>
+      <div class="color-dot" data-col="#00695C" style="background:#00695C;"></div>
+    </div>
+    <label class="lbl">Notes</label><textarea class="inp" id="ev-notes" rows="2" placeholder="Extra details..." style="margin-top:4px;resize:none;"></textarea>
+    <label class="lbl">For</label><select class="inp" id="ev-who" style="margin-top:4px;"></select>
+    <button class="btn btn-blue" id="ev-save-btn" style="margin-top:14px;">Save event</button>
+  </div>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-bg" id="task-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="task-close">X</button>
+    <div class="modal-title">Add task</div>
+    <label class="lbl">Task</label><input class="inp" id="task-inp" type="text" placeholder="e.g. Pick up groceries" style="margin-top:4px;"/>
+    <label class="lbl">Assigned to</label><select class="inp" id="task-who" style="margin-top:4px;"></select>
+    <label class="lbl">Due date</label><input class="inp" id="task-due" type="date" style="margin-top:4px;"/>
+    <button class="btn btn-blue" id="task-save-btn" style="margin-top:14px;">Add task</button>
+  </div>
+</div>
+
+<!-- ADD NOTE MODAL -->
+<div class="modal-bg" id="note-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="note-close">X</button>
+    <div class="modal-title">Add note</div>
+    <label class="lbl">Title</label><input class="inp" id="note-title-inp" type="text" placeholder="e.g. Vacation ideas" style="margin-top:4px;"/>
+    <label class="lbl">Note</label><textarea class="inp" id="note-body-inp" rows="4" placeholder="Write here..." style="margin-top:4px;resize:none;"></textarea>
+    <button class="btn btn-blue" id="note-save-btn" style="margin-top:14px;">Save note</button>
+  </div>
+</div>
+
+<!-- INVITE MODAL -->
+<div class="modal-bg" id="inv-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="inv-close">X</button>
+    <div class="modal-title">Invite family member</div>
+    <label class="lbl">Name</label><input class="inp" id="inv-name" type="text" placeholder="Their name" style="margin-top:4px;"/>
+    <label class="lbl">Email</label><input class="inp" id="inv-email" type="email" placeholder="their@email.com" style="margin-top:4px;"/>
+    <label class="lbl">Role</label>
+    <select class="inp" id="inv-role" style="margin-top:4px;">
+      <option>Parent</option><option>Child</option><option>Grandparent</option><option>Other</option>
+    </select>
+    <button class="btn btn-blue" id="inv-save-btn" style="margin-top:14px;">Send invite</button>
+  </div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="modal-bg" id="email-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="email-close">X</button>
+    <div class="modal-title">📧 Email today's schedule</div>
+    <div style="background:#E3F2FD;border-radius:11px;padding:12px;margin-bottom:14px;font-size:12px;color:#1565C0;line-height:1.7;">
+      <strong>Two ways to send:</strong><br/>
+      1. Just enter your email below and tap "Open in email app" — no setup needed!<br/>
+      2. For automatic sending, set up a free account at <strong>emailjs.com</strong> and enter your keys.
+    </div>
+    <label class="lbl">Your email address</label>
+    <input class="inp" id="email-addr" type="email" placeholder="your@email.com" style="margin-top:4px;"/>
+    <button class="btn btn-blue" id="open-email-btn" style="margin-top:12px;">📧 Open in email app</button>
+    <div style="background:#F5F5F5;border-radius:11px;padding:12px;margin:12px 0;">
+      <div style="font-family:'Fredoka One',cursive;font-size:13px;color:#546E7A;margin-bottom:8px;">Optional: Auto-send with EmailJS</div>
+      <label class="lbl">EmailJS Public Key</label>
+      <input class="inp" id="ejs-key" type="text" placeholder="Paste your EmailJS public key" style="margin-top:4px;"/>
+      <label class="lbl">Service ID</label>
+      <input class="inp" id="ejs-service" type="text" placeholder="e.g. service_abc123" style="margin-top:4px;"/>
+      <label class="lbl">Template ID</label>
+      <input class="inp" id="ejs-template" type="text" placeholder="e.g. template_xyz789" style="margin-top:4px;"/>
+      <button class="btn btn-green" id="auto-email-btn" style="margin-top:10px;">⚡ Send automatically</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIF PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="np-title">Notifications</div>
+  <div id="notif-list"><div style="font-size:12px;color:#546E7A;">No notifications right now!</div></div>
+</div>
+
+<!-- ===== AUTH SCREEN ===== -->
+<div id="screen-auth">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-ico"><i class="ti ti-calendar-heart"></i></div>
+      <div class="auth-name">MBS Family Calendar</div>
+      <div class="auth-tag">Stay connected as a family 💙</div>
+    </div>
+    <div class="tabs">
+      <button class="tab on" id="tab-in">Sign in</button>
+      <button class="tab" id="tab-up">Sign up</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <div id="panel-in">
+      <label class="lbl">Your name</label>
+      <input class="inp" id="si-name" type="text" placeholder="Your name" style="margin-top:4px;margin-bottom:0;"/>
+      <label class="lbl">Email</label>
+      <input class="inp" id="si-email" type="email" placeholder="your@email.com" style="margin-top:4px;"/>
+      <button class="btn btn-blue" id="si-btn" style="margin-top:14px;">Sign in</button>
+      <div class="div">or</div>
+      <button class="btn btn-out" id="guest-btn">Continue as guest</button>
+    </div>
+
+    <!-- SIGN UP -->
+    <div id="panel-up" class="hide">
+      <!-- Step 1: Info -->
+      <div id="su-s1">
+        <label class="lbl">Your name</label>
+        <input class="inp" id="su-name" type="text" placeholder="Your name" style="margin-top:4px;margin-bottom:0;"/>
+        <label class="lbl">Email</label>
+        <input class="inp" id="su-email" type="email" placeholder="your@email.com" style="margin-top:4px;"/>
+        <label class="lbl">Your role</label>
+        <select class="inp" id="su-role" style="margin-top:4px;">
+          <option>Parent</option><option>Child</option><option>Grandparent</option><option>Other</option>
+        </select>
+        <button class="btn btn-blue" id="su-next-btn" style="margin-top:14px;">Continue →</button>
+      </div>
+      <!-- Step 2: Join or Create -->
+      <div id="su-s2" class="hide">
+        <div class="step-title" style="margin-bottom:12px;">Join or create a family group?</div>
+        <div class="option-card" id="opt-join">
+          <div class="opt-ico" style="background:#E3F2FD;">👨‍👩‍👧</div>
+          <div><div class="opt-title">Join existing family</div><div class="opt-sub">Search for your family group</div></div>
+        </div>
+        <div class="option-card" id="opt-create">
+          <div class="opt-ico" style="background:#E8F5E9;">✨</div>
+          <div><div class="opt-title">Create new family group</div><div class="opt-sub">Start fresh, invite your family</div></div>
+        </div>
+      </div>
+      <!-- Step 3A: Join -->
+      <div id="su-s3-join" class="hide">
+        <div class="step-row"><button class="step-back" id="join-back"><i class="ti ti-arrow-left"></i> Back</button></div>
+        <div class="step-title" style="margin-bottom:10px;">Find your family group</div>
+        <div class="search-row">
+          <input class="inp" id="join-search" type="text" placeholder="Family name or invite code (e.g. MBS-1001)"/>
+          <button class="btn btn-blue btn-sm" id="join-search-btn">Search</button>
+        </div>
+        <div id="join-results" class="hide"></div>
+        <div id="join-pending" class="hide">
+          <div class="pending-box">
+            <div class="pending-icon">⏳</div>
+            <div class="pending-title">Request sent!</div>
+            <div class="pending-msg">Your request to join <strong id="pending-fam-name"></strong> has been sent.<br/>A family admin needs to approve you before you can access the calendar.<br/><br/>Please wait for approval.</div>
+          </div>
+        </div>
+      </div>
+      <!-- Step 3B: Create -->
+      <div id="su-s3-create" class="hide">
+        <div class="step-row"><button class="step-back" id="create-back"><i class="ti ti-arrow-left"></i> Back</button></div>
+        <div class="step-title" style="margin-bottom:10px;">Create your family group</div>
+        <label class="lbl">Family group name</label>
+        <input class="inp" id="su-famname" type="text" placeholder="e.g. The Johnson Family" style="margin-top:4px;"/>
+        <div class="info-box" style="margin-top:10px;">You will be the <strong>admin</strong> of this group. You can approve or reject anyone who requests to join.</div>
+        <button class="btn btn-blue" id="create-btn" style="margin-top:4px;">Create family group</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GREETING SCREEN ===== -->
+<div id="screen-greet" class="hide">
+  <div class="greet-box">
+    <div class="greet-av" id="g-av"></div>
+    <div class="greet-time" id="g-time"></div>
+    <div class="greet-date" id="g-date"></div>
+    <div class="greet-hello" id="g-hello"></div>
+    <div class="greet-name" id="g-name"></div>
+    <div class="greet-schedule">
+      <div class="gs-title">Today's schedule</div>
+      <div id="g-schedule"></div>
+    </div>
+    <button class="greet-enter" id="g-enter-btn">Go to calendar →</button>
+    <button class="greet-share" id="g-share-btn">📤 Share today's schedule</button>
+    <button class="greet-share" id="g-email-btn" style="margin-top:0;">📧 Email today's schedule</button>
+    <div class="greet-tip">💡 Tap Share in your browser then "Add to Home Screen" to use this like a real app on your phone!</div>
+  </div>
+</div>
+
+<!-- ===== APP SCREEN ===== -->
+<div id="screen-app">
+  <div class="topbar">
+    <div class="top-left">
+      <div class="top-ico"><i class="ti ti-calendar-heart"></i></div>
+      <div><div class="top-appname">MBS Family Calendar</div><div class="top-famname" id="t-famname">My Family</div></div>
+    </div>
+    <div class="top-right">
+      <div class="top-avs" id="t-avs"></div>
+      <button class="notif-btn" id="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></button>
+      <div class="chip" id="user-chip">
+        <div class="chip-av" id="t-chip-av"></div>
+        <div class="chip-name" id="t-chip-name"></div>
+      </div>
+    </div>
+  </div>
+  <div class="app-body">
+    <div class="sidebar">
+      <div class="nav-sec">Calendar</div>
+      <button class="nav-btn on" data-page="home"><i class="ti ti-home"></i> Home</button>
+      <button class="nav-btn" data-page="calendar"><i class="ti ti-calendar"></i> Calendar</button>
+      <button class="nav-btn" data-page="today"><i class="ti ti-sun"></i> Today</button>
+      <div class="nav-sec">Family</div>
+      <button class="nav-btn" data-page="family"><i class="ti ti-users"></i> Family</button>
+      <button class="nav-btn" data-page="tasks"><i class="ti ti-checkbox"></i> Tasks</button>
+      <button class="nav-btn" data-page="notes"><i class="ti ti-notes"></i> Notes</button>
+      <div class="nav-sec">Account</div>
+      <button class="nav-btn" data-page="profile"><i class="ti ti-user"></i> Profile</button>
+      <div class="sidebar-fam">
+        <div class="sf-title">Family online</div>
+        <div id="sf-list"></div>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- HOME PAGE -->
+      <div class="page show" id="page-home">
+        <div class="ph">
+          <div><div class="ph-title" id="home-title">Welcome!</div><div class="ph-sub" id="home-sub"></div></div>
+          <button class="btn btn-blue btn-sm" id="home-add-ev">+ Add event</button>
+        </div>
+        <div class="stats">
+          <div class="stat" style="background:#E3F2FD;"><div class="stat-n" style="color:#0D47A1;" id="st-evs">0</div><div class="stat-l" style="color:#1565C0;">Events this month</div></div>
+          <div class="stat" style="background:#FFEBEE;"><div class="stat-n" style="color:#B71C1C;" id="st-today">0</div><div class="stat-l" style="color:#C62828;">Events today</div></div>
+          <div class="stat" style="background:#E8F5E9;"><div class="stat-n" style="color:#1B5E20;" id="st-tasks">0</div><div class="stat-l" style="color:#2E7D32;">Tasks pending</div></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><div class="card-title" style="color:#0D47A1;"><i class="ti ti-calendar-event"></i> Upcoming events</div><div id="home-evs"></div></div>
+          <div class="card"><div class="card-title" style="color:#1B5E20;"><i class="ti ti-checkbox"></i> Today's tasks</div><div id="home-tasks"></div></div>
+        </div>
+        <div class="card"><div class="card-title" style="color:#546E7A;"><i class="ti ti-activity"></i> Recent activity</div><div id="home-act"></div></div>
+      </div>
+
+      <!-- CALENDAR PAGE -->
+      <div class="page" id="page-calendar">
+        <div class="ph">
+          <div><div class="ph-title">Calendar</div></div>
+          <button class="btn btn-blue btn-sm" id="cal-add-ev">+ Add event</button>
+        </div>
+        <div class="cal-nav">
+          <button class="cal-nb" id="cal-prev">‹</button>
+          <div class="cal-month" id="cal-month-lbl"></div>
+          <button class="cal-nb" id="cal-next">›</button>
+        </div>
+        <div class="cal-days-hd"><div class="cal-dh">Sun</div><div class="cal-dh">Mon</div><div class="cal-dh">Tue</div><div class="cal-dh">Wed</div><div class="cal-dh">Thu</div><div class="cal-dh">Fri</div><div class="cal-dh">Sat</div></div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="card" style="margin-top:13px;"><div class="card-title" id="cal-ev-lbl">All upcoming</div><div id="cal-ev-list"></div></div>
+      </div>
+
+      <!-- TODAY PAGE -->
+      <div class="page" id="page-today">
+        <div class="ph">
+          <div><div class="ph-title">Today</div><div class="ph-sub" id="today-sub"></div></div>
+          <div class="ph-btns">
+            <button class="btn btn-blue btn-sm" id="today-add-ev">+ Add event</button>
+            <button class="btn btn-sm" style="background:#E3F2FD;color:#1565C0;" id="today-share-btn">📤 Share</button>
+            <button class="btn btn-sm" style="background:#E8F5E9;color:#1B5E20;" id="today-email-btn">📧 Email</button>
+          </div>
+        </div>
+        <div id="today-list"></div>
+      </div>
+
+      <!-- FAMILY PAGE -->
+      <div class="page" id="page-family">
+        <div class="ph">
+          <div><div class="ph-title">Our family</div><div class="ph-sub" id="fam-count-sub"></div></div>
+          <button class="btn btn-blue btn-sm" id="fam-invite-btn">+ Invite member</button>
+        </div>
+        <div id="pending-section" class="hide pending-section"></div>
+        <div class="fam-cards" id="fam-grid"></div>
+        <div class="invite-box">
+          <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#0D47A1;margin-bottom:3px;">Share invite code</div>
+          <div style="font-size:12px;color:#546E7A;margin-bottom:6px;">Share this with family so they can join</div>
+          <div class="inv-code" id="inv-code-display">MBS-0000</div>
+          <button class="btn btn-blue btn-sm" id="copy-code-btn">Copy code</button>
+        </div>
+      </div>
+
+      <!-- TASKS PAGE -->
+      <div class="page" id="page-tasks">
+        <div class="ph"><div><div class="ph-title">Family tasks</div></div><button class="btn btn-blue btn-sm" id="tasks-add-btn">+ Add task</button></div>
+        <div id="task-list"></div>
+      </div>
+
+      <!-- NOTES PAGE -->
+      <div class="page" id="page-notes">
+        <div class="ph"><div><div class="ph-title">Family notes</div></div><button class="btn btn-blue btn-sm" id="notes-add-btn">+ Add note</button></div>
+        <div id="notes-list"></div>
+      </div>
+
+      <!-- PROFILE PAGE -->
+      <div class="page" id="page-profile">
+        <div class="ph"><div><div class="ph-title">My profile</div></div></div>
+        <div class="card" style="text-align:center;padding:22px;">
+          <div id="prof-av" style="width:68px;height:68px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:28px;color:#fff;"></div>
+          <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#0D1B3E;" id="prof-name"></div>
+          <div style="font-size:13px;color:#546E7A;margin-top:3px;" id="prof-email"></div>
+          <div style="font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;background:#E3F2FD;color:#0D47A1;display:inline-block;margin-top:8px;" id="prof-role"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px;">
+          <button class="btn btn-blue" id="prof-greet-btn">See greeting</button>
+          <button class="btn btn-out" id="prof-notif-btn">Notifications</button>
+          <button class="btn btn-blue" id="prof-email-btn" style="grid-column:1/-1;">📧 Email schedule setup</button>
+          <button class="btn btn-red" id="signout-btn" style="grid-column:1/-1;">Sign out</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// MBS FAMILY CALENDAR - Complete Clean Build
+// ============================================================
+
+// STATE
+var S = {
+  user: null,
+  famName: 'My Family',
+  famCode: 'MBS-0000',
+  members: [],
+  events: [],
+  tasks: [],
+  notes: [],
+  activity: [],
+  isAdmin: false,
+  myGroup: null,
+  pendingReq: null,
+  pendingGroup: null
+};
+
+// FAMILY GROUPS DATABASE (simulated)
+var GROUPS = [
+  {code:'MBS-1001', name:'The Johnson Family', admin:'Mike Johnson', members:[
+    {name:'Mike Johnson',role:'Parent',color:'#1565C0'},
+    {name:'Lisa Johnson',role:'Parent',color:'#C62828'},
+    {name:'Emma Johnson',role:'Child',color:'#1B5E20'}
+  ], pending:[]},
+  {code:'MBS-2002', name:'The Williams Family', admin:'Sarah Williams', members:[
+    {name:'Sarah Williams',role:'Parent',color:'#6A1B9A'},
+    {name:'Tom Williams',role:'Parent',color:'#00695C'}
+  ], pending:[]},
+  {code:'MBS-3003', name:'The Davis Family', admin:'Robert Davis', members:[
+    {name:'Robert Davis',role:'Parent',color:'#E65100'},
+    {name:'Karen Davis',role:'Parent',color:'#1B5E20'},
+    {name:'Jake Davis',role:'Child',color:'#1565C0'},
+    {name:'Amy Davis',role:'Child',color:'#C62828'}
+  ], pending:[]}
+];
+
+var AVCOLORS = ['#1565C0','#C62828','#1B5E20','#E65100','#6A1B9A','#00695C','#0D47A1','#880E4F'];
+var EVCOLORS = ['#1565C0','#C62828','#1B5E20','#E65100','#6A1B9A','#00695C'];
+var selColor = '#1565C0';
+var selCat = 'Family';
+var selDate = null;
+var calY = new Date().getFullYear();
+var calM = new Date().getMonth();
+var notifGranted = false;
+var notifPanelOpen = false;
+var suInfo = {};
+
+// HELPERS
+function pad(n){return n<10?'0'+n:''+n;}
+function todayStr(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmtDate(s){if(!s)return'';var d=new Date(s+'T12:00:00');return d.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});}
+function getH(){return new Date().getHours();}
+function getMC(name){var m=S.members.find(function(m){return m.name===name;});return m?m.color:'#1565C0';}
+function uid(){return Date.now()+Math.floor(Math.random()*1000);}
+
+// ============================================================
+// STORAGE - Save & Load
+// ============================================================
+function getKey(){return 'mbs_app_v4';}
+
+function save(){
+  var d={
+    user:S.user,
+    famName:S.famName,
+    famCode:S.famCode,
+    members:S.members,
+    events:S.events,
+    tasks:S.tasks,
+    notes:S.notes,
+    activity:S.activity.slice(0,20),
+    isAdmin:S.isAdmin,
+    saved:new Date().toISOString()
+  };
+  var str=JSON.stringify(d);
+  // Try all storage methods
+  try{window.localStorage.setItem(getKey(),str);}catch(e){}
+  try{window.sessionStorage.setItem(getKey(),str);}catch(e){}
+  // Cookie backup (stores just user + famname for auto-login)
+  try{
+    var exp=new Date();exp.setFullYear(exp.getFullYear()+1);
+    document.cookie=getKey()+'='+encodeURIComponent(str)+';expires='+exp.toUTCString()+';path=/;SameSite=Lax';
+  }catch(e){}
+}
+
+function load(){
+  var str=null;
+  // Try localStorage
+  try{str=window.localStorage.getItem(getKey());}catch(e){}
+  // Try sessionStorage
+  if(!str){try{str=window.sessionStorage.getItem(getKey());}catch(e){}}
+  // Try cookie
+  if(!str){
+    try{
+      var cookies=document.cookie.split(';');
+      for(var i=0;i<cookies.length;i++){
+        var c=cookies[i].trim();
+        if(c.indexOf(getKey()+'=')===0){
+          str=decodeURIComponent(c.substring(getKey().length+1));
+          break;
+        }
+      }
+    }catch(e){}
+  }
+  if(!str)return false;
+  try{
+    var d=JSON.parse(str);
+    if(!d||!d.user||!d.user.name)return false;
+    S.user=d.user;
+    S.famName=d.famName||'My Family';
+    S.famCode=d.famCode||'MBS-0000';
+    S.members=d.members||[];
+    S.events=d.events||[];
+    S.tasks=d.tasks||[];
+    S.notes=d.notes||[];
+    S.activity=d.activity||[];
+    S.isAdmin=d.isAdmin||false;
+    return true;
+  }catch(e){return false;}
+}
+
+function clearSave(){
+  try{window.localStorage.removeItem(getKey());}catch(e){}
+  try{window.sessionStorage.removeItem(getKey());}catch(e){}
+  try{document.cookie=getKey()+'=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/';}catch(e){}
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function(){
+  // ALWAYS bind buttons first
+  bindAll();
+  // Then check if already logged in
+  if(load() && S.user){
+    showScreen('greet');
+    setupGreeting();
+  } else {
+    showScreen('auth');
+  }
+});
+
+function showScreen(s){
+  document.getElementById('screen-auth').style.display = s==='auth'?'':'none';
+  var gs = document.getElementById('screen-greet');
+  gs.style.display = s==='greet'?'flex':'none';
+  gs.className = 'hide'; // reset
+  if(s==='greet') gs.style.cssText = 'min-height:100vh;background:linear-gradient(150deg,#0D47A1 0%,#1565C0 50%,#1976D2 100%);display:flex;align-items:center;justify-content:center;padding:20px;';
+  document.getElementById('screen-app').style.display = s==='app'?'block':'none';
+}
+
+// ============================================================
+// BIND ALL EVENTS
+// ============================================================
+function bindAll(){
+  // Auth tabs
+  document.getElementById('tab-in').onclick = function(){
+    document.getElementById('tab-in').className='tab on';
+    document.getElementById('tab-up').className='tab';
+    document.getElementById('panel-in').className='';
+    document.getElementById('panel-up').className='hide';
+  };
+  document.getElementById('tab-up').onclick = function(){
+    document.getElementById('tab-up').className='tab on';
+    document.getElementById('tab-in').className='tab';
+    document.getElementById('panel-up').className='';
+    document.getElementById('panel-in').className='hide';
+  };
+
+  // Sign in / guest
+  document.getElementById('si-btn').onclick = doSignIn;
+  document.getElementById('guest-btn').onclick = doGuest;
+
+  // Sign up steps
+  document.getElementById('su-next-btn').onclick = function(){
+    var name=document.getElementById('su-name').value.trim();
+    if(!name){alert('Please enter your name!');return;}
+    suInfo={name:name,email:document.getElementById('su-email').value.trim(),role:document.getElementById('su-role').value,color:AVCOLORS[Math.floor(Math.random()*AVCOLORS.length)]};
+    showSuStep('s2');
+  };
+
+  document.getElementById('opt-join').onclick = function(){showSuStep('s3-join');};
+  document.getElementById('opt-create').onclick = function(){showSuStep('s3-create');};
+  document.getElementById('join-back').onclick = function(){showSuStep('s2');};
+  document.getElementById('create-back').onclick = function(){showSuStep('s2');};
+  document.getElementById('join-search-btn').onclick = searchGroups;
+  document.getElementById('join-search').onkeydown = function(e){if(e.key==='Enter')searchGroups();};
+  document.getElementById('create-btn').onclick = doCreate;
+
+  // Greeting
+  document.getElementById('g-enter-btn').onclick = enterApp;
+  document.getElementById('g-share-btn').onclick = shareSchedule;
+
+  // Nav
+  document.querySelectorAll('.nav-btn[data-page]').forEach(function(btn){
+    btn.onclick = function(){goPage(this.getAttribute('data-page'));};
+  });
+
+  // Topbar
+  document.getElementById('notif-btn').onclick = toggleNotif;
+  document.getElementById('user-chip').onclick = function(){goPage('profile');};
+
+  // Home
+  document.getElementById('home-add-ev').onclick = openEvModal;
+  document.getElementById('cal-add-ev').onclick = openEvModal;
+  document.getElementById('today-add-ev').onclick = openEvModal;
+  document.getElementById('today-share-btn').onclick = shareSchedule;
+
+  // Modals close
+  document.getElementById('ev-close').onclick = function(){closeModal('ev-modal');};
+  document.getElementById('task-close').onclick = function(){closeModal('task-modal');};
+  document.getElementById('note-close').onclick = function(){closeModal('note-modal');};
+  document.getElementById('inv-close').onclick = function(){closeModal('inv-modal');};
+
+  // Modal saves
+  document.getElementById('ev-save-btn').onclick = saveEvent;
+  document.getElementById('task-save-btn').onclick = saveTask;
+  document.getElementById('note-save-btn').onclick = saveNote;
+  document.getElementById('inv-save-btn').onclick = saveInvite;
+
+  // Family
+  document.getElementById('fam-invite-btn').onclick = function(){openModal('inv-modal');};
+  document.getElementById('copy-code-btn').onclick = copyCode;
+
+  // Tasks / Notes
+  document.getElementById('tasks-add-btn').onclick = function(){fillWho();openModal('task-modal');};
+  document.getElementById('notes-add-btn').onclick = function(){openModal('note-modal');};
+
+  // Calendar nav
+  document.getElementById('cal-prev').onclick = function(){calM--;if(calM<0){calM=11;calY--;}renderCal();};
+  document.getElementById('cal-next').onclick = function(){calM++;if(calM>11){calM=0;calY++;}renderCal();};
+
+  // Color picker
+  document.querySelectorAll('.color-dot').forEach(function(d){
+    d.onclick = function(){
+      document.querySelectorAll('.color-dot').forEach(function(x){x.classList.remove('on');});
+      d.classList.add('on');
+      selColor=d.getAttribute('data-col');
+    };
+  });
+
+  // Category chips
+  document.querySelectorAll('.cat-chip').forEach(function(c){
+    c.onclick = function(){
+      document.querySelectorAll('.cat-chip').forEach(function(x){x.className='cat-chip';});
+      c.className='cat-chip on';
+      selCat=c.getAttribute('data-cat');
+    };
+  });
+
+  // Email
+  document.getElementById('email-close').onclick = function(){closeModal('email-modal');};
+  document.getElementById('open-email-btn').onclick = openEmailApp;
+  document.getElementById('auto-email-btn').onclick = sendAutoEmail;
+  document.getElementById('g-email-btn').onclick = function(){openModal('email-modal');};
+  document.getElementById('today-email-btn').onclick = function(){openModal('email-modal');};
+  document.getElementById('prof-email-btn').onclick = function(){openModal('email-modal');};
+
+  // Profile
+  document.getElementById('prof-greet-btn').onclick = function(){showScreen('greet');setupGreeting();};
+  document.getElementById('prof-notif-btn').onclick = function(){document.getElementById('perm-modal').className='perm-modal open';};
+  document.getElementById('signout-btn').onclick = signOut;
+
+  // Notification permission
+  document.getElementById('allow-notif-btn').onclick = allowNotif;
+  document.getElementById('deny-notif-btn').onclick = function(){document.getElementById('perm-modal').className='perm-modal';};
+
+  // Join request modal
+  document.getElementById('jr-approve-btn').onclick = approveReq;
+  document.getElementById('jr-reject-btn').onclick = function(){document.getElementById('jr-modal').className='jr-modal';};
+
+  // Close panels on outside click
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('#notif-btn')&&!e.target.closest('#notif-panel')){
+      document.getElementById('notif-panel').className='notif-panel';
+      notifPanelOpen=false;
+    }
+  });
+
+  // Clock tick
+  setInterval(function(){
+    var el=document.getElementById('g-time');
+    if(el) el.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    var hel=document.getElementById('g-hello');
+    if(hel){var h=getH();hel.textContent=h<12?'Good morning,':h<17?'Good afternoon,':'Good evening,';}
+  },1000);
+
+  // Show greeting when returning to tab
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden&&S.user&&document.getElementById('screen-app').style.display!=='none'){
+      // Already in app, just refresh
+    } else if(!document.hidden&&S.user){
+      showScreen('greet');
+      setupGreeting();
+    }
+  });
+}
+
+function showSuStep(s){
+  ['s1','s2','s3-join','s3-create'].forEach(function(x){document.getElementById('su-'+x).className='hide';});
+  document.getElementById('su-'+s).className='';
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function doSignIn(){
+  var name=document.getElementById('si-name').value.trim();
+  if(!name){alert('Please enter your name!');return;}
+  S.user={name:name,email:document.getElementById('si-email').value.trim()||'user@family.com',role:'Member',color:AVCOLORS[0],id:uid()};
+  S.isAdmin=false;
+  S.famName='My Family';
+  S.famCode='MBS-'+Math.floor(1000+Math.random()*9000);
+  S.members=[Object.assign({},S.user,{online:true})];
+  save();
+  showScreen('greet');
+  setupGreeting();
+}
+
+function doGuest(){
+  S.user={name:'Guest',email:'guest@family.com',role:'Guest',color:AVCOLORS[0],id:uid()};
+  S.isAdmin=false;
+  S.famName='My Family';
+  S.famCode='MBS-'+Math.floor(1000+Math.random()*9000);
+  S.members=[Object.assign({},S.user,{online:true})];
+  save();
+  showScreen('greet');
+  setupGreeting();
+}
+
+function doCreate(){
+  var famname=document.getElementById('su-famname').value.trim();
+  if(!famname){alert('Please enter a family group name!');return;}
+  S.user=Object.assign({id:uid()},suInfo);
+  S.isAdmin=true;
+  S.famName=famname;
+  S.famCode='MBS-'+Math.floor(1000+Math.random()*9000);
+  S.members=[Object.assign({},S.user,{online:true,isAdmin:true})];
+  // Register group
+  S.myGroup={code:S.famCode,name:S.famName,admin:S.user.name,members:[{name:S.user.name,role:S.user.role,color:S.user.color}],pending:[]};
+  GROUPS.push(S.myGroup);
+  save();
+  showScreen('greet');
+  setupGreeting();
+}
+
+function signOut(){
+  clearSave();
+  S={user:null,famName:'My Family',famCode:'MBS-0000',members:[],events:[],tasks:[],notes:[],activity:[],isAdmin:false,myGroup:null,pendingReq:null,pendingGroup:null};
+  showScreen('auth');
+  // Reset signup steps
+  showSuStep('s1');
+  document.getElementById('tab-in').className='tab on';
+  document.getElementById('tab-up').className='tab';
+  document.getElementById('panel-in').className='';
+  document.getElementById('panel-up').className='hide';
+}
+
+// ============================================================
+// GROUP SEARCH & JOIN
+// ============================================================
+function searchGroups(){
+  var q=document.getElementById('join-search').value.trim().toLowerCase();
+  if(!q){alert('Please enter a family name or invite code!');return;}
+  var res=GROUPS.filter(function(g){return g.name.toLowerCase().includes(q)||g.code.toLowerCase()===q;});
+  var el=document.getElementById('join-results');
+  el.className='';
+  if(!res.length){el.innerHTML='<div style="text-align:center;padding:14px;font-size:13px;font-weight:700;color:#546E7A;">No family group found. Try a different name or code.</div>';return;}
+  el.innerHTML=res.map(function(g,i){
+    var avs=g.members.slice(0,4).map(function(m){return '<div class="mini-av" style="background:'+m.color+';" title="'+m.name+'">'+m.name[0]+'</div>';}).join('');
+    var names=g.members.slice(0,3).map(function(m){return '<div class="member-name-tag">&middot; '+m.name+' ('+m.role+')</div>';}).join('');
+    var more=g.members.length>3?'<div class="member-name-tag">+ '+(g.members.length-3)+' more...</div>':'';
+    return '<div class="fam-result"><div style="display:flex;align-items:center;justify-content:space-between;"><div class="fam-result-name">'+g.name+'</div><div style="font-size:10px;font-weight:700;color:#90A4AE;">'+g.code+'</div></div><div class="fam-result-meta">Admin: '+g.admin+' &bull; '+g.members.length+' member'+(g.members.length!==1?'s':'')+'</div><div style="font-size:11px;font-weight:700;color:#546E7A;margin:6px 0 4px;">Members in this group:</div><div class="fam-result-members">'+avs+'</div><div style="margin:4px 0;">'+names+more+'</div><button class="btn btn-blue btn-sm" style="margin-top:9px;width:100%;" data-gidx="'+i+'">Request to join</button></div>';
+  }).join('');
+  window._searchRes=res;
+  // Bind join buttons
+  el.querySelectorAll('button[data-gidx]').forEach(function(btn){
+    btn.onclick=function(e){e.stopPropagation();requestJoin(parseInt(this.getAttribute('data-gidx')));};
+  });
+}
+
+function requestJoin(idx){
+  var g=window._searchRes[idx];
+  var req=Object.assign({id:uid()},suInfo);
+  g.pending.push(req);
+  S.pendingReq=req;
+  S.pendingGroup=g;
+  document.getElementById('join-results').className='hide';
+  document.getElementById('pending-fam-name').textContent=g.name;
+  document.getElementById('join-pending').className='';
+  // If I am the admin of this group, show request immediately (demo mode)
+  if(S.myGroup&&S.myGroup.code===g.code&&S.isAdmin){showJoinReqModal(req,g);}
+}
+
+function showJoinReqModal(req,g){
+  document.getElementById('jr-name').textContent=req.name;
+  document.getElementById('jr-famname').textContent=g.name;
+  document.getElementById('jr-details').innerHTML='<strong>Name:</strong> '+req.name+'<br><strong>Email:</strong> '+(req.email||'Not provided')+'<br><strong>Role:</strong> '+req.role;
+  S.pendingReq=req;S.pendingGroup=g;
+  document.getElementById('jr-modal').className='jr-modal open';
+}
+
+function approveReq(){
+  document.getElementById('jr-modal').className='jr-modal';
+  var req=S.pendingReq;var g=S.pendingGroup;
+  if(!req||!g)return;
+  g.members.push({name:req.name,role:req.role,color:req.color||AVCOLORS[0]});
+  g.pending=g.pending.filter(function(r){return r.id!==req.id;});
+  S.members.push(Object.assign({},req,{online:true}));
+  S.activity.unshift({t:req.name+' joined the family calendar!',c:'#1565C0'});
+  save();renderFam();refreshHome();setupTopbar();
+  alert(req.name+' has been approved!');
+}
+
+// ============================================================
+// GREETING
+// ============================================================
+function setupGreeting(){
+  var now=new Date();var h=getH();
+  var hello=h<12?'Good morning,':h<17?'Good afternoon,':'Good evening,';
+  document.getElementById('g-av').textContent=S.user.name[0].toUpperCase();
+  document.getElementById('g-av').style.background=S.user.color||'#1565C0';
+  document.getElementById('g-time').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('g-date').textContent=now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('g-hello').textContent=hello;
+  document.getElementById('g-name').textContent=S.user.name+'!';
+  var evs=S.events.filter(function(e){return e.date===todayStr();}).sort(function(a,b){return(a.start||'').localeCompare(b.start||'');});
+  var gsel=document.getElementById('g-schedule');
+  gsel.innerHTML=evs.length?evs.map(function(e){return '<div class="gs-item"><div class="gs-dot" style="background:'+e.color+';"></div><div class="gs-txt">'+e.title+'</div><div class="gs-time">'+(e.start||'')+'</div></div>';}).join(''):'<div style="font-size:13px;color:rgba(255,255,255,0.6);padding:6px 0;">No events today — enjoy your day!</div>';
+  // Ask for notification permission after 2 seconds
+  if('Notification' in window&&Notification.permission==='default'){
+    setTimeout(function(){document.getElementById('perm-modal').className='perm-modal open';},2000);
+  }
+}
+
+function enterApp(){
+  showScreen('app');
+  setupTopbar();
+  refreshHome();
+  renderCal();
+  renderFam();
+  renderTasks();
+  renderNotes();
+  renderToday();
+  checkPendingReqs();
+}
+
+// ============================================================
+// APP SETUP
+// ============================================================
+function setupTopbar(){
+  document.getElementById('t-famname').textContent=S.famName;
+  document.getElementById('inv-code-display').textContent=S.famCode;
+  document.getElementById('t-chip-av').textContent=S.user.name[0].toUpperCase();
+  document.getElementById('t-chip-av').style.background=S.user.color||'#1565C0';
+  document.getElementById('t-chip-name').textContent=S.user.name;
+  var avs=document.getElementById('t-avs');
+  avs.innerHTML=S.members.slice(0,4).map(function(m){return '<div class="top-av" style="background:'+m.color+';" title="'+m.name+'">'+m.name[0]+'</div>';}).join('');
+  renderSidebarFam();
+  renderProfile();
+}
+
+function renderProfile(){
+  var pa=document.getElementById('prof-av');
+  pa.textContent=S.user.name[0].toUpperCase();pa.style.background=S.user.color||'#1565C0';
+  document.getElementById('prof-name').textContent=S.user.name;
+  document.getElementById('prof-email').textContent=S.user.email||'';
+  document.getElementById('prof-role').textContent=S.user.role||'Member';
+}
+
+function renderSidebarFam(){
+  document.getElementById('sf-list').innerHTML=S.members.map(function(m){return '<div class="sf-mem"><div class="sf-av" style="background:'+m.color+';">'+m.name[0]+'</div><div class="sf-name">'+m.name+'</div><div class="sf-dot" style="background:'+(m.online?'#2E7D32':'#ccc')+';"></div></div>';}).join('');
+}
+
+// ============================================================
+// HOME
+// ============================================================
+function refreshHome(){
+  var now=new Date();var h=getH();
+  var hello=h<12?'Good morning,':h<17?'Good afternoon,':'Good evening,';
+  document.getElementById('home-title').textContent=hello+' '+S.user.name+'!';
+  document.getElementById('home-sub').textContent=now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+  var mEvs=S.events.filter(function(e){var d=new Date(e.date+'T12:00:00');return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();});
+  var tEvs=S.events.filter(function(e){return e.date===todayStr();});
+  var pTasks=S.tasks.filter(function(t){return !t.done;});
+  document.getElementById('st-evs').textContent=mEvs.length;
+  document.getElementById('st-today').textContent=tEvs.length;
+  document.getElementById('st-tasks').textContent=pTasks.length;
+  var upEvs=S.events.filter(function(e){return e.date>=todayStr();}).sort(function(a,b){return a.date.localeCompare(b.date);}).slice(0,5);
+  var hel=document.getElementById('home-evs');
+  hel.innerHTML=upEvs.length?upEvs.map(function(e){return '<div class="ev-row"><div class="ev-bar" style="background:'+e.color+';"></div><div style="flex:1;"><div class="ev-title">'+e.title+'</div><div class="ev-meta">'+fmtDate(e.date)+(e.start?' at '+e.start:'')+'</div></div><span class="ev-who" style="background:'+e.color+'22;color:'+e.color+';">'+e.who+'</span></div>';}).join(''):'<div class="empty"><i class="ti ti-calendar"></i><p>No events yet!</p></div>';
+  var todTasks=S.tasks.filter(function(t){return t.due===todayStr();}).slice(0,4);
+  var htl=document.getElementById('home-tasks');
+  htl.innerHTML=todTasks.length?todTasks.map(function(t){return '<div class="task-row"><div class="task-chk'+(t.done?' done':'')+'" data-id="'+t.id+'">'+(t.done?'<i class="ti ti-check"></i>':'')+'</div><div class="task-txt'+(t.done?' done':'')+'">'+t.text+'</div><span class="task-who-chip" style="background:'+getMC(t.who)+'22;color:'+getMC(t.who)+';">'+t.who+'</span></div>';}).join(''):'<div class="empty"><i class="ti ti-checkbox"></i><p>No tasks today!</p></div>';
+  htl.querySelectorAll('.task-chk[data-id]').forEach(function(el){el.onclick=function(){toggleTask(parseInt(this.getAttribute('data-id')));};});
+  var hal=document.getElementById('home-act');
+  hal.innerHTML=S.activity.length?S.activity.slice(0,5).map(function(a){return '<div class="ev-row"><div class="ev-bar" style="background:'+a.c+';"></div><div class="ev-title">'+a.t+'</div></div>';}).join(''):'<div style="font-size:12px;color:#546E7A;">Activity shows here.</div>';
+  renderNotifs();
+}
+
+// ============================================================
+// PAGES
+// ============================================================
+function goPage(p){
+  document.querySelectorAll('.page').forEach(function(el){el.className='page';});
+  document.querySelectorAll('.nav-btn[data-page]').forEach(function(el){el.className='nav-btn';});
+  document.getElementById('page-'+p).className='page show';
+  document.querySelector('.nav-btn[data-page="'+p+'"]').className='nav-btn on';
+  if(p==='home')refreshHome();
+  if(p==='calendar')renderCal();
+  if(p==='today')renderToday();
+  if(p==='family')renderFam();
+  if(p==='tasks')renderTasks();
+  if(p==='notes')renderNotes();
+  if(p==='profile')renderProfile();
+}
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function renderCal(){
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-lbl').textContent=months[calM]+' '+calY;
+  var grid=document.getElementById('cal-grid');
+  var first=new Date(calY,calM,1).getDay();
+  var days=new Date(calY,calM+1,0).getDate();
+  var prev=new Date(calY,calM,0).getDate();
+  var now=new Date();var html='';
+  for(var i=0;i<first;i++){html+='<div class="cal-cell is-other"><span class="cal-dn">'+(prev-first+1+i)+'</span></div>';}
+  for(var d=1;d<=days;d++){
+    var ds=calY+'-'+pad(calM+1)+'-'+pad(d);
+    var isT=d===now.getDate()&&calM===now.getMonth()&&calY===now.getFullYear();
+    var isS=ds===selDate;
+    var dEvs=S.events.filter(function(e){return e.date===ds;});
+    var chips=dEvs.slice(0,2).map(function(e){return '<div class="cal-ev-chip" style="background:'+e.color+';">'+e.title+'</div>';}).join('');
+    html+='<div class="cal-cell'+(isT?' is-today':'')+(isS?' is-sel':'')+'" data-date="'+ds+'"><span class="cal-dn">'+d+'</span>'+chips+'</div>';
+  }
+  var rem=(7-((first+days)%7))%7;
+  for(var j=1;j<=rem;j++){html+='<div class="cal-cell is-other"><span class="cal-dn">'+j+'</span></div>';}
+  grid.innerHTML=html;
+  grid.querySelectorAll('.cal-cell[data-date]').forEach(function(el){
+    el.onclick=function(){selDate=this.getAttribute('data-date');renderCal();document.getElementById('cal-ev-lbl').textContent=fmtDate(selDate);renderCalList(selDate);};
+  });
+  renderCalList(selDate);
+}
+
+function renderCalList(ds){
+  var evs=ds?S.events.filter(function(e){return e.date===ds;}):S.events.filter(function(e){return e.date>=todayStr();}).slice(0,8);
+  var el=document.getElementById('cal-ev-list');
+  el.innerHTML=evs.length?evs.map(function(e){return '<div class="ev-row"><div class="ev-bar" style="background:'+e.color+';"></div><div style="flex:1;"><div class="ev-title">'+e.title+'</div><div class="ev-meta">'+fmtDate(e.date)+(e.start?' at '+e.start:'')+'</div></div><span class="ev-who" style="background:'+e.color+'22;color:'+e.color+';">'+e.who+'</span><button class="ev-del" data-id="'+e.id+'"><i class="ti ti-trash"></i></button></div>';}).join(''):'<div class="empty"><i class="ti ti-calendar"></i><p>No events!</p></div>';
+  el.querySelectorAll('.ev-del[data-id]').forEach(function(btn){btn.onclick=function(){delEvent(parseInt(this.getAttribute('data-id')));};});
+}
+
+// ============================================================
+// TODAY
+// ============================================================
+function renderToday(){
+  document.getElementById('today-sub').textContent=new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+  var evs=S.events.filter(function(e){return e.date===todayStr();}).sort(function(a,b){return(a.start||'').localeCompare(b.start||'');});
+  var el=document.getElementById('today-list');
+  el.innerHTML=evs.length?evs.map(function(e,i){return '<div class="tl-item"><div class="tl-time">'+(e.start||'All day')+'</div><div class="tl-line"><div class="tl-dot" style="background:'+e.color+';"></div>'+(i<evs.length-1?'<div class="tl-bar"></div>':'')+'</div><div class="tl-content" style="border-left:4px solid '+e.color+';"><div class="tl-title">'+e.title+'</div><div class="tl-meta">'+(e.start?e.start+' – '+e.end:'All day')+' &middot; '+e.who+(e.notes?' &middot; '+e.notes:'')+'</div></div></div>';}).join(''):'<div class="empty"><i class="ti ti-sun"></i><p>Nothing today!</p></div>';
+}
+
+// ============================================================
+// EVENTS
+// ============================================================
+function openEvModal(){
+  document.getElementById('ev-title').value='';
+  document.getElementById('ev-date').value=selDate||todayStr();
+  document.getElementById('ev-start').value='09:00';
+  document.getElementById('ev-end').value='10:00';
+  document.getElementById('ev-notes').value='';
+  selColor='#1565C0';selCat='Family';
+  document.querySelectorAll('.color-dot').forEach(function(d){d.classList.remove('on');});
+  document.querySelector('.color-dot[data-col="#1565C0"]').classList.add('on');
+  document.querySelectorAll('.cat-chip').forEach(function(c){c.className='cat-chip';});
+  document.querySelector('.cat-chip[data-cat="Family"]').className='cat-chip on';
+  fillWho();
+  openModal('ev-modal');
+}
+
+function saveEvent(){
+  var title=document.getElementById('ev-title').value.trim();
+  if(!title){alert('Please enter a title!');return;}
+  var ev={id:uid(),title:title,date:document.getElementById('ev-date').value||todayStr(),start:document.getElementById('ev-start').value,end:document.getElementById('ev-end').value,color:selColor,category:selCat,notes:document.getElementById('ev-notes').value,who:document.getElementById('ev-who').value||S.user.name,addedBy:S.user.name};
+  S.events.push(ev);
+  S.activity.unshift({t:S.user.name+' added "'+title+'"',c:selColor});
+  closeModal('ev-modal');save();
+  refreshHome();renderCal();renderToday();
+}
+
+function delEvent(id){
+  S.events=S.events.filter(function(e){return e.id!==id;});
+  save();renderCal();renderCalList(selDate);refreshHome();renderToday();
+}
+
+// ============================================================
+// FAMILY
+// ============================================================
+function renderFam(){
+  document.getElementById('fam-count-sub').textContent=S.members.length+' member'+(S.members.length!==1?'s':'');
+  var ps=document.getElementById('pending-section');
+  if(S.isAdmin&&S.myGroup&&S.myGroup.pending.length>0){
+    ps.className='pending-section';
+    ps.innerHTML='<div class="ps-title">Pending join requests ('+S.myGroup.pending.length+')</div>'+S.myGroup.pending.map(function(req){return '<div class="req-card"><div style="width:38px;height:38px;border-radius:50%;background:'+(req.color||'#1565C0')+';display:flex;align-items:center;justify-content:center;font-family:Fredoka One,cursive;font-size:16px;color:#fff;flex-shrink:0;">'+req.name[0]+'</div><div class="req-info"><div class="req-name">'+req.name+'</div><div class="req-meta">'+req.role+' &middot; '+(req.email||'')+'</div></div><div class="req-btns"><button class="btn btn-red btn-sm" data-id="'+req.id+'">Reject</button><button class="btn btn-blue btn-sm" data-id="'+req.id+'">Approve</button></div></div>';}).join('');
+    ps.querySelectorAll('.btn-blue[data-id]').forEach(function(btn){btn.onclick=function(){var r=S.myGroup.pending.find(function(x){return x.id===parseInt(this.getAttribute('data-id'));}.bind(this));if(r){S.pendingReq=r;S.pendingGroup=S.myGroup;approveReq();}}.bind(btn);});
+    ps.querySelectorAll('.btn-red[data-id]').forEach(function(btn){btn.onclick=function(){var id=parseInt(this.getAttribute('data-id'));S.myGroup.pending=S.myGroup.pending.filter(function(x){return x.id!==id;});renderFam();alert('Request rejected.');}.bind(btn);});
+  } else {ps.className='hide';}
+  var fg=document.getElementById('fam-grid');
+  fg.innerHTML=S.members.map(function(m){var cnt=S.events.filter(function(e){return e.who===m.name;}).length;return '<div class="fam-card"><div class="fc-av" style="background:'+m.color+';">'+m.name[0]+'</div><div class="fc-name">'+m.name+'</div><div class="fc-role">'+m.role+'</div><span class="fc-count">'+cnt+' events</span></div>';}).join('');
+  renderSidebarFam();
+}
+
+function saveInvite(){
+  var name=document.getElementById('inv-name').value.trim();
+  if(!name){alert('Please enter a name!');return;}
+  var m={id:uid(),name:name,email:document.getElementById('inv-email').value,role:document.getElementById('inv-role').value,color:AVCOLORS[S.members.length%AVCOLORS.length],online:false};
+  S.members.push(m);
+  S.activity.unshift({t:S.user.name+' invited '+name,c:'#1565C0'});
+  if(S.myGroup)S.myGroup.members.push({name:m.name,role:m.role,color:m.color});
+  closeModal('inv-modal');save();renderFam();refreshHome();setupTopbar();
+  alert(name+' has been added to your family calendar!');
+}
+
+function copyCode(){
+  navigator.clipboard.writeText(S.famCode).then(function(){alert('Invite code copied: '+S.famCode);}).catch(function(){alert('Your family invite code is: '+S.famCode);});
+}
+
+// ============================================================
+// TASKS
+// ============================================================
+function saveTask(){
+  var text=document.getElementById('task-inp').value.trim();
+  if(!text){alert('Please enter a task!');return;}
+  S.tasks.push({id:uid(),text:text,who:document.getElementById('task-who').value||S.user.name,done:false,due:document.getElementById('task-due').value||todayStr()});
+  S.activity.unshift({t:S.user.name+' added task: "'+text+'"',c:'#1B5E20'});
+  document.getElementById('task-inp').value='';
+  closeModal('task-modal');save();renderTasks();refreshHome();
+}
+
+function toggleTask(id){
+  var t=S.tasks.find(function(t){return t.id===id;});
+  if(t){t.done=!t.done;if(t.done)S.activity.unshift({t:S.user.name+' completed "'+t.text+'"',c:'#1B5E20'});}
+  save();renderTasks();refreshHome();
+}
+
+function delTask(id){S.tasks=S.tasks.filter(function(t){return t.id!==id;});save();renderTasks();refreshHome();}
+
+function renderTasks(){
+  var el=document.getElementById('task-list');
+  el.innerHTML=S.tasks.length?S.tasks.map(function(t){return '<div class="task-row"><div class="task-chk'+(t.done?' done':'')+'" data-id="'+t.id+'">'+(t.done?'<i class="ti ti-check"></i>':'')+'</div><div class="task-txt'+(t.done?' done':'")>'+t.text+'</div><span style="font-size:10px;color:#546E7A;font-weight:700;margin-right:4px;">'+fmtDate(t.due)+'</span><span class="task-who-chip" style="background:'+getMC(t.who)+'22;color:'+getMC(t.who)+';">'+t.who+'</span><button class="task-del" data-id="'+t.id+'"><i class="ti ti-trash"></i></button></div>';}).join(''):'<div class="empty"><i class="ti ti-checkbox"></i><p>No tasks yet!</p></div>';
+  el.querySelectorAll('.task-chk[data-id]').forEach(function(el){el.onclick=function(){toggleTask(parseInt(this.getAttribute('data-id')));};});
+  el.querySelectorAll('.task-del[data-id]').forEach(function(el){el.onclick=function(){delTask(parseInt(this.getAttribute('data-id')));};});
+}
+
+// ============================================================
+// NOTES
+// ============================================================
+function saveNote(){
+  var title=document.getElementById('note-title-inp').value.trim();
+  if(!title){alert('Please enter a title!');return;}
+  S.notes.unshift({id:uid(),title:title,body:document.getElementById('note-body-inp').value,author:S.user.name,date:todayStr()});
+  S.activity.unshift({t:S.user.name+' added note: "'+title+'"',c:'#E65100'});
+  document.getElementById('note-title-inp').value='';document.getElementById('note-body-inp').value='';
+  closeModal('note-modal');save();renderNotes();refreshHome();
+}
+
+function delNote(id){S.notes=S.notes.filter(function(n){return n.id!==id;});save();renderNotes();}
+
+function renderNotes(){
+  var el=document.getElementById('notes-list');
+  el.innerHTML=S.notes.length?S.notes.map(function(n){return '<div class="note-card"><div class="note-title">'+n.title+'</div><div class="note-body">'+n.body+'</div><div class="note-foot"><span class="note-author">By '+n.author+' &middot; '+fmtDate(n.date)+'</span><button class="task-del" data-id="'+n.id+'"><i class="ti ti-trash"></i></button></div></div>';}).join(''):'<div class="empty"><i class="ti ti-notes"></i><p>No notes yet!</p></div>';
+  el.querySelectorAll('.task-del[data-id]').forEach(function(el){el.onclick=function(){delNote(parseInt(this.getAttribute('data-id')));};});
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function toggleNotif(){
+  notifPanelOpen=!notifPanelOpen;
+  document.getElementById('notif-panel').className='notif-panel'+(notifPanelOpen?' open':'');
+  renderNotifs();
+}
+
+function renderNotifs(){
+  var tEvs=S.events.filter(function(e){return e.date===todayStr();});
+  var pT=S.tasks.filter(function(t){return !t.done&&t.due===todayStr();});
+  var items=[];
+  tEvs.forEach(function(e){items.push('<div class="np-item">'+e.title+(e.start?' at '+e.start:'')+'<div class="np-sub">For: '+e.who+'</div></div>');});
+  if(pT.length)items.push('<div class="np-item">'+pT.length+' task'+(pT.length>1?'s':'')+' due today<div class="np-sub">Check your task list</div></div>');
+  document.getElementById('notif-list').innerHTML=items.length?items.join(''):'<div style="font-size:12px;color:#546E7A;">No notifications!</div>';
+}
+
+function allowNotif(){
+  document.getElementById('perm-modal').className='perm-modal';
+  if('Notification' in window){Notification.requestPermission().then(function(p){notifGranted=p==='granted';if(notifGranted){new Notification('MBS Family Calendar',{body:'Daily reminders are on!'});scheduleNotifs();}});}
+}
+
+function scheduleNotifs(){
+  setInterval(function(){
+    if(!notifGranted)return;
+    var now=new Date();var h=now.getHours();var m=now.getMinutes();
+    if(h===7&&m===0){var evs=S.events.filter(function(e){return e.date===todayStr();});new Notification('Good morning, '+S.user.name+'!',{body:evs.length?evs.length+' event'+(evs.length>1?'s':'')+' today!':'No events today!'});}
+    S.events.forEach(function(e){if(e.date===todayStr()&&e.start){var parts=e.start.split(':');var em=parseInt(parts[0])*60+parseInt(parts[1]);var nm=h*60+m;if(em-nm===60)new Notification('Coming up in 1 hour!',{body:e.title+(e.who?' ('+e.who+')':'')});}});
+  },60000);
+}
+
+// ============================================================
+// SHARE SCHEDULE
+// ============================================================
+function shareSchedule(){
+  var now=new Date();var h=getH();
+  var hello=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  var evs=S.events.filter(function(e){return e.date===todayStr();}).sort(function(a,b){return(a.start||'').localeCompare(b.start||'');});
+  var ts=S.tasks.filter(function(t){return t.due===todayStr()&&!t.done;});
+  var msg=hello+', '+S.user.name+'!\n'+now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})+'\n------------------------\nMBS Family Calendar\n\n';
+  if(evs.length){msg+="TODAY'S SCHEDULE:\n";evs.forEach(function(e){msg+=(e.start||'All day')+' - '+e.title+(e.who?' ('+e.who+')':'')+'\n';});}
+  else{msg+='No events today!\n';}
+  if(ts.length){msg+="\nTODAY'S TASKS:\n";ts.forEach(function(t){msg+='- '+t.text+' ('+t.who+')\n';});}
+  msg+='\n💙 Have a great day!\n- MBS Family Calendar';
+  if(navigator.share){navigator.share({title:'MBS Family Schedule',text:msg}).catch(function(){copyText(msg);});}
+  else{copyText(msg);}
+}
+
+function copyText(t){
+  navigator.clipboard.writeText(t).then(function(){alert('Schedule copied! Paste it anywhere.');}).catch(function(){window.open('mailto:?subject=MBS Family Schedule&body='+encodeURIComponent(t));});
+}
+
+// ============================================================
+// EMAIL SCHEDULE
+// ============================================================
+function buildEmailBody(){
+  var now=new Date();var h=getH();
+  var hello=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  var evs=S.events.filter(function(e){return e.date===todayStr();}).sort(function(a,b){return(a.start||'').localeCompare(b.start||'');});
+  var ts=S.tasks.filter(function(t){return t.due===todayStr()&&!t.done;});
+  var upcoming=S.events.filter(function(e){return e.date>todayStr();}).sort(function(a,b){return a.date.localeCompare(b.date);}).slice(0,3);
+  var msg=hello+', '+S.user.name+'!
+';
+  msg+=now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric',year:'numeric'})+'
+';
+  msg+='================================
+';
+  msg+='MBS Family Calendar - Daily Schedule
+';
+  msg+='================================
+
+';
+  if(evs.length){
+    msg+="TODAY'S EVENTS:
+";
+    evs.forEach(function(e){
+      msg+=(e.start||'All day')+' - '+e.title+(e.who?' ('+e.who+')':'')+(e.notes?'
+   Note: '+e.notes:'')+'
+';
+    });
+  } else { msg+='No events scheduled today!
+'; }
+  if(ts.length){
+    msg+="
+TODAY'S TASKS:
+";
+    ts.forEach(function(t){msg+='• '+t.text+' → '+t.who+'
+';});
+  }
+  if(upcoming.length){
+    msg+='
+COMING UP:
+';
+    upcoming.forEach(function(e){msg+='📅 '+fmtDate(e.date)+' - '+e.title+'
+';});
+  }
+  msg+='
+💙 Have a wonderful day!
+— MBS Family Calendar';
+  return msg;
+}
+
+function openEmailApp(){
+  var addr=document.getElementById('email-addr').value.trim();
+  var body=buildEmailBody();
+  var subject=encodeURIComponent('📅 MBS Family Schedule - '+new Date().toLocaleDateString());
+  var bodyEnc=encodeURIComponent(body);
+  window.open('mailto:'+addr+'?subject='+subject+'&body='+bodyEnc,'_blank');
+  closeModal('email-modal');
+}
+
+function sendAutoEmail(){
+  var key=document.getElementById('ejs-key').value.trim();
+  var svc=document.getElementById('ejs-service').value.trim();
+  var tpl=document.getElementById('ejs-template').value.trim();
+  var addr=document.getElementById('email-addr').value.trim();
+  if(!addr){alert('Please enter your email address!');return;}
+  if(!key||!svc||!tpl){
+    // Fall back to mailto
+    openEmailApp();
+    return;
+  }
+  try{
+    emailjs.init(key);
+    emailjs.send(svc,tpl,{
+      to_email:addr,
+      to_name:S.user.name,
+      subject:'📅 MBS Family Schedule - '+new Date().toLocaleDateString(),
+      message:buildEmailBody(),
+      date:new Date().toLocaleDateString()
+    }).then(function(){
+      closeModal('email-modal');
+      alert('✅ Schedule sent to '+addr+'!');
+    }).catch(function(err){
+      console.error(err);
+      openEmailApp();
+    });
+  }catch(e){openEmailApp();}
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function openModal(id){document.getElementById(id).className='modal-bg open';}
+function closeModal(id){document.getElementById(id).className='modal-bg';}
+
+function fillWho(){
+  var opts=S.members.map(function(m){return '<option>'+m.name+'</option>';}).join('');
+  ['ev-who','task-who'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+
+function checkPendingReqs(){
+  if(!S.isAdmin||!S.myGroup)return;
+  var g=GROUPS.find(function(x){return x.code===S.famCode;});
+  if(g&&g.pending.length>0){S.myGroup=g;setTimeout(function(){showJoinReqModal(g.pending[0],g);},1500);}
+}
+</script>
+</body>
+</html>
